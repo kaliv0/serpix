@@ -1,0 +1,24 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=68.2.0", "wheel"]
+
+[project]
+authors = [
+  {name = "Kaloyan Ivanov", email = "kaloyan.ivanov88@gmail.com"},
+]
+description = "Basic Unix commands in Python"
+name = "pnx"
+readme = "README.md"
+version = "0.0.1"
+
+requires-python = ">=3.11"
+
+dependencies = [
+  "click == 8.1.7",
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "app.__version__"}
+
+[project.scripts]
+pnx = "app.__main__:cli"

@@ -1,1 +1,1 @@
-# WC-in-Python
+# Basic Unix commands in Python
