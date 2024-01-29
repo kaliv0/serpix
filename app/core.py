@@ -2,7 +2,7 @@ import sys
 from dataclasses import dataclass
 
 
-@dataclass(frozen=True)
+@dataclass
 class FileData:
     byte_count: int
     line_count: int
@@ -11,28 +11,23 @@ class FileData:
     file_name: str
 
 
-def extract_file_data(file: str) -> FileData:
-    if "-" in file:
-        file_name = "-"
-    else:
-        file_name = file[0]
-
-    bytes_count = 0
-    lines_count = 0
-    words_count = 0
-    chars_count = 0
-    if file_name and not file_name == "-":
-        with open(file_name, "rb") as f:
+def extract_file_data(file: str, is_empty_file_list: bool = False) -> FileData:
+    data = FileData(0, 0, 0, 0, "")
+    if file and file != "-":
+        with open(file, "rb") as f:
             for line in f:
-                bytes_count += len(line)
-                lines_count += 1
-                words_count += len(line.split())
-                # NB: If the current locale does not support multibyte characters this will match the bytes_count.
-                chars_count += len(line.decode())
+                update_file_data(line, data)
     else:
         for line in sys.stdin.buffer:
-            bytes_count += len(line)
-            lines_count += 1
-            words_count += len(line.split())
-            chars_count += len(line.decode())
-    return FileData(bytes_count, lines_count, words_count, chars_count, file_name)
+            update_file_data(line, data)
+
+    if not is_empty_file_list:
+        data.file_name = file
+    return data
+
+
+def update_file_data(line, data) -> None:
+    data.byte_count += len(line)
+    data.line_count += 1
+    data.word_count += len(line.split())
+    data.char_count += len(line.decode())
