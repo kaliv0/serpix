@@ -6,7 +6,6 @@ import click
 from app.core import FileData, extract_file_data
 
 
-
 @dataclass
 class WCOptions:
     show_lines: bool
@@ -98,9 +97,7 @@ def build_total_message(total_data: FileData, wc_opts: WCOptions | None) -> str:
     return build_message_from_options(total_data, wc_opts)
 
 
-def update_total_data(
-    wc_opts: WCOptions, curr_data: FileData, total_data: FileData
-) -> None:
+def update_total_data(wc_opts: WCOptions, curr_data: FileData, total_data: FileData) -> None:
     if wc_opts.show_lines:
         total_data.line_count += curr_data.line_count
     if wc_opts.show_words:

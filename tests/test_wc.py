@@ -11,14 +11,8 @@ TOTAL_SUFFIX = "total   "
 def test_wc_single_file() -> None:
     runner = CliRunner()
     # no options
-    assert (
-        runner.invoke(wc, [LOG_FILE]).output
-        == f"       5       13       83 {LOG_FILE}\n"
-    )
-    assert (
-        runner.invoke(wc, [BOOK_FILE]).output
-        == f"    7145    58164   342190 {BOOK_FILE}\n"
-    )
+    assert runner.invoke(wc, [LOG_FILE]).output == f"       5       13       83 {LOG_FILE}\n"
+    assert runner.invoke(wc, [BOOK_FILE]).output == f"    7145    58164   342190 {BOOK_FILE}\n"
     # single option
     assert runner.invoke(wc, ["-c", LOG_FILE]).output == f"      83 {LOG_FILE}\n"
     assert runner.invoke(wc, ["-c", BOOK_FILE]).output == f"  342190 {BOOK_FILE}\n"
@@ -33,30 +27,14 @@ def test_wc_single_file() -> None:
     assert runner.invoke(wc, ["-m", BOOK_FILE]).output == f"  339292 {BOOK_FILE}\n"
 
     # combined options
-    assert (
-        runner.invoke(wc, ["-cl", LOG_FILE]).output == f"       5       83 {LOG_FILE}\n"
-    )
-    assert (
-        runner.invoke(wc, ["-cl", BOOK_FILE]).output
-        == f"    7145   342190 {BOOK_FILE}\n"
-    )
+    assert runner.invoke(wc, ["-cl", LOG_FILE]).output == f"       5       83 {LOG_FILE}\n"
+    assert runner.invoke(wc, ["-cl", BOOK_FILE]).output == f"    7145   342190 {BOOK_FILE}\n"
 
-    assert (
-        runner.invoke(wc, ["-wm", LOG_FILE]).output == f"      13       83 {LOG_FILE}\n"
-    )
-    assert (
-        runner.invoke(wc, ["-wm", BOOK_FILE]).output
-        == f"   58164   339292 {BOOK_FILE}\n"
-    )
+    assert runner.invoke(wc, ["-wm", LOG_FILE]).output == f"      13       83 {LOG_FILE}\n"
+    assert runner.invoke(wc, ["-wm", BOOK_FILE]).output == f"   58164   339292 {BOOK_FILE}\n"
 
-    assert (
-        runner.invoke(wc, ["-cwl", LOG_FILE]).output
-        == runner.invoke(wc, [LOG_FILE]).output
-    )
-    assert (
-        runner.invoke(wc, ["-cwl", BOOK_FILE]).output
-        == runner.invoke(wc, [BOOK_FILE]).output
-    )
+    assert runner.invoke(wc, ["-cwl", LOG_FILE]).output == runner.invoke(wc, [LOG_FILE]).output
+    assert runner.invoke(wc, ["-cwl", BOOK_FILE]).output == runner.invoke(wc, [BOOK_FILE]).output
 
     # non-existent file
     assert runner.invoke(wc, [NON_EXISTENT_FILE]).output == (

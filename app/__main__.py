@@ -3,7 +3,6 @@ import click
 from app.cli import commands
 
 
-
 @click.group()
 def cli() -> None:
     pass
