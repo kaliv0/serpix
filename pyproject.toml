@@ -21,7 +21,6 @@ dependencies = [
 dev = [
   "tox == 4.12.1",
   "ruff == 0.1.15",
-  # "pylint == 3.0.3",
   "mypy == 1.8.0",
   "pytest == 8.0.0",
 ]
