@@ -1,6 +1,6 @@
 import click
 
-from app.utils import build_wc_options, handle_file_list, handle_single_file
+from app.cli.utils import build_wc_options, handle_file_list, handle_single_file
 
 
 @click.command(help="With no FILE, or when FILE is -, read standard input.")

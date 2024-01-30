@@ -3,7 +3,8 @@ from dataclasses import dataclass
 
 import click
 
-from app.cli.core import FileData, extract_file_data
+from app.core import FileData, extract_file_data
+
 
 
 @dataclass
