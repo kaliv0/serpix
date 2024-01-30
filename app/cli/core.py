@@ -26,9 +26,10 @@ def extract_file_data(file: str, is_empty_file_list: bool = False) -> FileData:
     return data
 
 
-def update_file_data(line, data) -> None:
+def update_file_data(line: bytes, data: FileData) -> None:
     data.byte_count += len(line)
-    # TODO: the original command reads "/n" symbols -> to be fixed
-    data.line_count += 1
     data.word_count += len(line.split())
-    data.char_count += len(line.decode())
+    decoded_line = line.decode()
+    data.char_count += len(decoded_line)
+    if decoded_line.endswith("\n"):
+        data.line_count += 1
