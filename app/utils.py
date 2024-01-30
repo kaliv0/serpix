@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 import click
 
-from app.core import FileData, extract_file_data
+from app.cli.core import FileData, extract_file_data
 
 
 @dataclass
@@ -79,7 +79,6 @@ def build_message_from_options(data: FileData, wc_opts: WCOptions) -> str:
 
 def build_message_no_options(data: FileData) -> str:
     message = f"{data.line_count :>8} {data.word_count :>8} {data.byte_count :>8} "
-    print(f"FOOO {data.file_name=}")
     if data.file_name:
         message += f"{data.file_name :<8}"
     return message

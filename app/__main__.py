@@ -1,6 +1,6 @@
 import click
 
-from app import commands
+from app.cli import commands
 
 
 @click.group()
