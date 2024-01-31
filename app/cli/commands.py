@@ -1,6 +1,12 @@
 import click
 
-from app.cli.utils import build_wc_options, handle_file_list, handle_single_file
+from app.cli.utils.wc_utils import (
+    build_wc_options,
+    handle_file_list,
+    handle_single_file,
+)
+
+# ### wc ###
 
 
 @click.command(help="With no FILE, or when FILE is -, read standard input.")
@@ -45,3 +51,32 @@ def wc(
         handle_file_list(file_list, wc_opts)
     else:
         handle_single_file(file_list, wc_opts)
+
+
+# ### cat ###
+
+# ### head ###
+
+# ### tail ###
+
+# ### grep ###
+
+# ### sed ###
+
+# ### tr ###
+
+# ### cut ###
+
+# ### sort ###
+
+# ### uniq ###
+
+###### ???????? ######
+
+# ### diff -> without pager ###
+
+# ### more ###
+
+# ### less ###
+
+# ### crontab ###
