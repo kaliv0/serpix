@@ -4,6 +4,7 @@ from app.cli.commands import wc
 
 LOG_FILE = "tests/resources/log.txt"
 BOOK_FILE = "tests/resources/book.txt"
+NON_EXISTENT_FILE = "test/resources/bazz.yaml"
 TOTAL_SUFFIX = "total   "
 
 
@@ -74,4 +75,11 @@ def test_wc_file_list() -> None:
     assert (
         runner.invoke(wc, ["-cwl", LOG_FILE, BOOK_FILE]).output
         == runner.invoke(wc, [LOG_FILE, BOOK_FILE]).output
+    )
+
+    # non-existent file
+    assert runner.invoke(wc, [LOG_FILE, NON_EXISTENT_FILE]).output == (
+        f"       5       13       83 {LOG_FILE}\n"
+        f"wc: {NON_EXISTENT_FILE}: No such file or directory\n"
+        f"       5       13       83 {TOTAL_SUFFIX}\n"
     )
