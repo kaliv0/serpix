@@ -63,23 +63,6 @@ def wc(
 @click.command()
 @click.argument("file_list", metavar="file", type=click.Path(), nargs=-1)
 @click.option(
-    "-c",
-    "--bytes",
-    "byte_count",
-    type=click.IntRange(0),
-    help="""print the first NUM bytes of each file""",
-)
-@click.option(
-    "-n",
-    "--lines",
-    "line_count",
-    type=int,
-    default=10,
-    show_default=True,
-    help="""print the first NUM lines instead of the first 10;
-    with the leading '-', print all but the last NUM lines of each file""",
-)
-@click.option(
     "-q",
     "--quiet",
     "--silent",
@@ -92,12 +75,30 @@ def wc(
     is_flag=True,
     help="always print headers giving file names",
 )
+@click.option(
+    "-c",
+    "--bytes",
+    "byte_count",
+    type=click.IntRange(0),
+    default=0,
+    help="""print the first NUM bytes of each file""",
+)
+@click.option(
+    "-n",
+    "--lines",
+    "line_count",
+    type=int,
+    default=10,
+    show_default=True,
+    help="""print the first NUM lines instead of the first 10;
+    with the leading '-', print all but the last NUM lines of each file""",
+)
 def head(
     file_list: tuple[str, ...],
-    byte_count: int,
-    line_count: int,
     quiet: bool,
     verbose: bool,
+    byte_count: int = 0,
+    line_count: int = 10,
 ) -> None:
     """
     Print the first 10 lines of each FILE to standard output.
@@ -106,24 +107,18 @@ def head(
     With no FILE, or when FILE is -, read standard input.
     """
 
-    #
-    # -no file -> read 10 lines from sdtin
-    # -list of files -> with/out opts
-    #     -> display header of each file as "==> test2.txt <=="
-    #     -> empty line between files
-    #
     if len(file_list) > 1:
         head_opts = head_utils.build_head_options(
-            byte_count, line_count, quiet, verbose, multiple_files=True
+            quiet, verbose, byte_count, line_count, multiple_files=True
         )
         head_utils.handle_file_list(file_list, head_opts)
         ...
     elif len(file_list) == 1:
-        head_opts = head_utils.build_head_options(byte_count, line_count, quiet, verbose)
+        head_opts = head_utils.build_head_options(quiet, verbose, byte_count, line_count)
         head_utils.handle_single_file(file_list[0], head_opts)
     else:
-        # head_utils.read_from_sdtin(head_opts)
-        ...
+        head_opts = head_utils.build_head_options(quiet, verbose, byte_count, line_count)
+        head_utils.read_from_sdtin(head_opts)
 
 
 # ### cat ###
