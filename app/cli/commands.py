@@ -112,11 +112,14 @@ def head(
     #     -> display header of each file as "==> test2.txt <=="
     #     -> empty line between files
     #
-    head_opts = head_utils.build_head_options(byte_count, line_count, quiet, verbose)
     if len(file_list) > 1:
-        # head_utils.handle_file_list(file_list, head_opts)
+        head_opts = head_utils.build_head_options(
+            byte_count, line_count, quiet, verbose, multiple_files=True
+        )
+        head_utils.handle_file_list(file_list, head_opts)
         ...
     elif len(file_list) == 1:
+        head_opts = head_utils.build_head_options(byte_count, line_count, quiet, verbose)
         head_utils.handle_single_file(file_list[0], head_opts)
     else:
         # head_utils.read_from_sdtin(head_opts)

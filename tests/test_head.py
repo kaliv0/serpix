@@ -4,6 +4,7 @@ from app.cli.commands import head
 
 LOG_FILE = "tests/resources/log.txt"
 POEM_FILE = "tests/resources/poem.txt"
+NON_EXISTENT_FILE = "test/resources/bazz.yaml"
 
 
 def test_head_single_file() -> None:
@@ -61,25 +62,72 @@ To hearts which near each other move
 def test_wc_file_list() -> None:
     runner = CliRunner()
     # no options
-    # assert runner.invoke(head, [LOG_FILE, BOOK_FILE]).output == (
-    #     f"       5       13       83 {LOG_FILE}\n"
-    #     f"    7145    58164   342190 {BOOK_FILE}\n"
-    # )
+    expected_multiple_no_opts = """==> tests/resources/log.txt <==
+Hello world
+Ciao ragazzi
+Bon jour
+Bratwurst
+De lana caprina rixatur
+Aien aristeuein
 
-    # # single option
-    # assert runner.invoke(head, ["-c", LOG_FILE, BOOK_FILE]).output == (
-    #     f"      83 {LOG_FILE}\n" f"  342190 {BOOK_FILE}\n" f"  342273 {TOTAL_SUFFIX}\n"
-    # )
+==> tests/resources/poem.txt <==
+Good-night? ah! no; the hour is ill
+Which severs those it should unite;
+Let us remain together still,
+Then it will be GOOD night.
 
-    # # combined options
-    # assert runner.invoke(head, ["-cl", LOG_FILE, BOOK_FILE]).output == (
-    #     f"       5       83 {LOG_FILE}\n"
-    #     f"    7145   342190 {BOOK_FILE}\n"
-    #     f"    7150   342273 {TOTAL_SUFFIX}\n"
+How can I call the lone night good,
+Though thy sweet wishes wing its flight?
+Be it not said, thought, understood -
+Then it will be - GOOD night.
 
-    # # non-existent file
-    # assert runner.invoke(head, [LOG_FILE, NON_EXISTENT_FILE]).output == (
-    #     f"       5       13       83 {LOG_FILE}\n"
-    #     f"head: {NON_EXISTENT_FILE}: No such file or directory\n"
-    #     f"       5       13       83 {TOTAL_SUFFIX}\n"
-    # )
+"""
+    assert runner.invoke(head, [LOG_FILE, POEM_FILE]).output == expected_multiple_no_opts
+
+    # single option
+    expected_multiple_n5 = """==> tests/resources/log.txt <==
+Hello world
+Ciao ragazzi
+Bon jour
+Bratwurst
+De lana caprina rixatur
+
+==> tests/resources/poem.txt <==
+Good-night? ah! no; the hour is ill
+Which severs those it should unite;
+Let us remain together still,
+Then it will be GOOD night.
+
+"""
+    assert runner.invoke(head, ["-n 5", LOG_FILE, POEM_FILE]).output == expected_multiple_n5
+
+    # combined options
+    expected_multiple_q_n6 = """Hello world
+Ciao ragazzi
+Bon jour
+Bratwurst
+De lana caprina rixatur
+Aien aristeuein
+
+Good-night? ah! no; the hour is ill
+Which severs those it should unite;
+Let us remain together still,
+Then it will be GOOD night.
+
+How can I call the lone night good,
+"""
+    assert runner.invoke(head, ["-q", "-n 6", LOG_FILE, POEM_FILE]).output == expected_multiple_q_n6
+
+    # non-existent file
+    expected_multiple_non_existent = f"""head: cannot open '{NON_EXISTENT_FILE}' for reading: No such file or directory
+Good-night? ah! no; the hour is ill
+Which severs those it should unite;
+Let us remain together still,
+Then it will be GOOD night.
+
+How can I call the lone night good,
+"""
+    assert (
+        runner.invoke(head, ["-q", "-n 6", NON_EXISTENT_FILE, POEM_FILE]).output
+        == expected_multiple_non_existent
+    )
