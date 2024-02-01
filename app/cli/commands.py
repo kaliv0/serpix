@@ -65,16 +65,18 @@ def wc(
 @click.option(
     "-c",
     "--bytes",
-    "show_bytes",
-    is_flag=True,
+    "byte_count",
+    type=click.INT,
     help="""print the first NUM bytes of each file; 
     with the leading '-', print all but the last NUM bytes of each file""",
 )
 @click.option(
     "-n",
     "--lines",
-    "show_lines",
-    is_flag=True,
+    "line_count",
+    type=click.INT,
+    default=10,
+    show_default=True,
     help="""print the first NUM lines instead of the first 10;
     with the leading '-', print all but the last NUM lines of each file""",
 )
@@ -95,8 +97,8 @@ def wc(
 )
 def head(
     file_list: tuple[str, ...],
-    show_bytes: bool,
-    show_lines: bool,
+    byte_count: int,
+    line_count: int,
     quiet: bool,
     verbose: bool,
 ) -> None:
@@ -109,19 +111,14 @@ def head(
 
     #
     # -no file -> read 10 lines from sdtin
-    # -single file no opts
-    # --first n lines (passed as opt "-n{count}" e.g. -n3)
-    #     -> the file could have less lines than spec. opt.
-    #     NB: in original opt name and value could be separated by space or not(!)
+    # -single file
     # --first c bytes (-c 30) -> same caveat
-    # handle non existing file
-    #   -> "head: cannot open 'foo' for reading: No such file or directory"
 
     # -list of files -> with/out opts
     #     -> display header of each file as "==> test2.txt <=="
     #     -> empty line between files
     #
-    head_opts = head_utils.build_head_options(show_bytes, show_lines, quiet, verbose)
+    head_opts = head_utils.build_head_options(byte_count, line_count, quiet, verbose)
     if len(file_list) > 1:
         # head_utils.handle_file_list(file_list, head_opts)
         ...
