@@ -67,7 +67,7 @@ def handle_file_list(file_list: tuple[str, ...], wc_opts: WCOptions | None) -> N
     total_data = FileData(0, 0, 0, 0, "total")
     for file in file_list:
         if file != "-" and os.path.exists(file) is False:
-            click.echo(f"wc: {file}: No such file or directory")
+            click.echo(f"wc: {file}: No such file or directory", err=True)
             continue
 
         data = extract_file_data(file)
@@ -86,8 +86,7 @@ def handle_file_list(file_list: tuple[str, ...], wc_opts: WCOptions | None) -> N
 def handle_single_file(file_list: tuple[str, ...], wc_opts: WCOptions | None) -> None:
     file, is_empty_file_list = _get_file_name(file_list)
     if file != "-" and os.path.exists(file) is False:
-        click.echo(f"wc: {file}: No such file or directory")
-        return
+        raise ValueError(f"wc: {file}: No such file or directory")
 
     data = extract_file_data(file, is_empty_file_list)
     if wc_opts is None:
