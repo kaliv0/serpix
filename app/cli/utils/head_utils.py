@@ -31,7 +31,6 @@ def build_head_options(byte_count: int, line_count: int, quiet: bool, verbose: b
 def handle_single_file(file: str, head_opts: HeadOptions) -> None:
     if os.path.exists(file) is False:
         raise ValueError(f"head: cannot open '{file}' for reading: No such file or directory")
-
     message = _build_message(file, head_opts)
     click.echo(message)
 
@@ -40,12 +39,17 @@ def handle_single_file(file: str, head_opts: HeadOptions) -> None:
 
 
 def _build_message(file: str, head_opts: HeadOptions) -> str:
-    with open(file, "r") as f:
-        lines = f.readlines()[: head_opts.line_count]
+    # @FIXME string list manipulation -> split + join?!
+    if head_opts.byte_count:
+        with open(file, "rb") as f:
+            file_content = f.read(head_opts.byte_count).decode().rstrip("\n")
+    else:
+        with open(file, "r") as f:
+            lines = f.readlines()[: head_opts.line_count]
         # remove final new line to mimic original message
         lines[-1] = lines[-1].rstrip("\n")
-
-        message = ""
-        if head_opts.verbose:
-            message += f"==> {file} <==\n"
-        return message + "".join(lines)  # @FIXME
+        file_content = "".join(lines)
+    message = ""
+    if head_opts.verbose:
+        message += f"==> {file} <==\n"
+    return message + file_content

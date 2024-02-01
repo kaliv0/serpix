@@ -54,14 +54,8 @@ To hearts which near each other move
     assert runner.invoke(head, ["-v", "-n 3", LOG_FILE]).output == expected_v_n3
     assert runner.invoke(head, ["-v", "-n -3", POEM_FILE]).output == expected_v_minus_n3
 
-    # # combined options
-    # assert runner.invoke(head, ["-cl", LOG_FILE]).output == f"       5       83 {LOG_FILE}\n"
-    # assert runner.invoke(head, ["-cl", BOOK_FILE]).output == f"    7145   342190 {BOOK_FILE}\n"
-
-    # # non-existent file
-    # assert runner.invoke(head, [NON_EXISTENT_FILE]).output == (
-    #     f"head: {NON_EXISTENT_FILE}: No such file or directory\n"
-    # )
+    expected_c4 = "Hello world\nCiao ragazzi\nBon jour\nBratwu\n"
+    assert runner.invoke(head, ["-c 40", LOG_FILE]).output == expected_c4
 
 
 def test_wc_file_list() -> None:

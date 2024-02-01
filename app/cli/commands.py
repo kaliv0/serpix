@@ -66,15 +66,14 @@ def wc(
     "-c",
     "--bytes",
     "byte_count",
-    type=click.INT,
-    help="""print the first NUM bytes of each file; 
-    with the leading '-', print all but the last NUM bytes of each file""",
+    type=click.IntRange(0),
+    help="""print the first NUM bytes of each file""",
 )
 @click.option(
     "-n",
     "--lines",
     "line_count",
-    type=click.INT,
+    type=int,
     default=10,
     show_default=True,
     help="""print the first NUM lines instead of the first 10;
@@ -85,14 +84,12 @@ def wc(
     "--quiet",
     "--silent",
     is_flag=True,
-    # default=True,
     help="never print headers giving file names",
 )
 @click.option(
     "-v",
     "--verbose",
     is_flag=True,
-    # default=False,
     help="always print headers giving file names",
 )
 def head(
@@ -111,9 +108,6 @@ def head(
 
     #
     # -no file -> read 10 lines from sdtin
-    # -single file
-    # --first c bytes (-c 30) -> same caveat
-
     # -list of files -> with/out opts
     #     -> display header of each file as "==> test2.txt <=="
     #     -> empty line between files
