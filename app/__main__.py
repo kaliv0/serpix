@@ -18,3 +18,4 @@ def cli() -> None:
 
 cli.add_command(commands.wc)
 cli.add_command(commands.head)
+cli.add_command(commands.tail)
