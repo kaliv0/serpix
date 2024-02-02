@@ -72,6 +72,7 @@ def read_from_sdtin(tail_opts: TailOptions) -> None:
         return
     # other options (line_count) are discarded
     if tail_opts.byte_count:
+        # @FIXME:
         message = sys.stdin.buffer.readline()[: tail_opts.byte_count].decode()
         click.echo(message)
         return
@@ -87,7 +88,9 @@ def read_from_sdtin(tail_opts: TailOptions) -> None:
 def _build_message(file: str, tail_opts: TailOptions) -> str:
     if tail_opts.byte_count:
         with open(file, "rb") as f:
-            file_content = f.read(tail_opts.byte_count).decode().rstrip("\n")
+            # calculate and find offset
+            f.seek(os.path.getsize(file) - tail_opts.byte_count)
+            file_content = f.read().decode().rstrip("\n")
     else:
         with open(file, "r") as f:
             lines = f.readlines()[-tail_opts.line_count :]
