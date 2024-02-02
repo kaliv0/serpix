@@ -48,11 +48,11 @@ def handle_file_list(file_list: tuple[str, ...], head_opts: HeadOptions) -> None
                 f"head: cannot open '{file}' for reading: No such file or directory", err=True
             )
             continue
+        # leave blank line before next file header
+        if idx > 0:
+            click.echo()
         message = _build_message(file, head_opts)
         click.echo(message)
-        # leave blank line before next file header
-        if idx < len(file_list) - 1:
-            click.echo()
 
 
 def read_from_sdtin(head_opts: HeadOptions) -> None:

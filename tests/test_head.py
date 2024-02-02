@@ -120,6 +120,7 @@ How can I call the lone night good,
 
     # non-existent file
     expected_multiple_non_existent = f"""head: cannot open '{NON_EXISTENT_FILE}' for reading: No such file or directory
+
 Good-night? ah! no; the hour is ill
 Which severs those it should unite;
 Let us remain together still,

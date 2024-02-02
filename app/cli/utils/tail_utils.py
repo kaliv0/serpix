@@ -56,11 +56,11 @@ def handle_file_list(file_list: tuple[str, ...], tail_opts: TailOptions) -> None
                 f"tail: cannot open '{file}' for reading: No such file or directory", err=True
             )
             continue
+        # leave blank line before next file header
+        if idx > 0:
+            click.echo()
         message = _build_message(file, tail_opts)
         click.echo(message)
-        # leave blank line before next file header
-        if idx < len(file_list) - 1:
-            click.echo()
 
 
 def read_from_sdtin(tail_opts: TailOptions) -> None:
@@ -90,7 +90,7 @@ def _build_message(file: str, tail_opts: TailOptions) -> str:
             file_content = f.read(tail_opts.byte_count).decode().rstrip("\n")
     else:
         with open(file, "r") as f:
-            lines = f.readlines()[: tail_opts.line_count]
+            lines = f.readlines()[-tail_opts.line_count :]
         # remove final new line to mimic original message
         lines[-1] = lines[-1].rstrip("\n")
         file_content = "".join(lines)
