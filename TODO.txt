@@ -1,0 +1,29 @@
+wc
+head
+tail 
+=============================
+
+cat 
+grep 
+sed 
+tr 
+cut 
+sort 
+uniq 
+-----------------------------
+diff -> without pager -> see Tsoding daily and github repo 
+patch (depends on diff?)
+more? 
+less? 
+crontab 
+find
+xargs
+hexdump
+sh
+(blog -> see Zed Shaw?)
+bc
+ed
+(vi -> depends on ed and sed)
+
+ls ??
+curl
