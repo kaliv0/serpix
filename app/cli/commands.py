@@ -178,15 +178,11 @@ def tail(
     With no FILE, or when FILE is -, read standard input.
     """
 
-    # TODO:add --follow
-    # raise exception if -f is used with list of files
-
     if len(file_list) > 1:
         tail_opts = tail_utils.build_tail_options(
             quiet, verbose, follow, byte_count, line_count, multiple_files=True
         )
         tail_utils.handle_file_list(file_list, tail_opts)
-        ...
     elif len(file_list) == 1:
         tail_opts = tail_utils.build_tail_options(quiet, verbose, follow, byte_count, line_count)
         tail_utils.handle_single_file(file_list[0], tail_opts)

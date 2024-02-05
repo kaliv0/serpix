@@ -34,6 +34,8 @@ def build_tail_options(
             verbose = True
         else:
             quiet = True
+
+    # @TODO: raise exception here if -f is passed with list of files?
     return TailOptions(quiet, verbose, follow, byte_count, line_count)
 
 
@@ -43,17 +45,34 @@ def build_tail_options(
 def handle_single_file(file: str, tail_opts: TailOptions) -> None:
     if os.path.exists(file) is False:
         raise ValueError(f"tail: cannot open '{file}' for reading: No such file or directory")
+    if os.path.isdir(file):
+        if tail_opts.verbose:
+            click.echo(f"==> {file} <==\n")
+        raise ValueError(f"tail: error reading '{file}': Is a directory")
+
+    if tail_opts.follow:
+        return _follow_file(file, tail_opts)
     message = _build_message(file, tail_opts)
     click.echo(message)
 
 
 def handle_file_list(file_list: tuple[str, ...], tail_opts: TailOptions) -> None:
+    if tail_opts.follow:
+        click.echo("following multiple files is not supported", err=True)
+
     for idx, file in enumerate(file_list):
+        # @TODO: extract validation and use here and in handle_single_file
         if os.path.exists(file) is False:
             click.echo(
                 f"tail: cannot open '{file}' for reading: No such file or directory", err=True
             )
             continue
+        if os.path.isdir(file):
+            if tail_opts.verbose:
+                click.echo(f"==> {file} <==\n")
+            click.echo(f"tail: error reading '{file}': Is a directory", err=True)
+            continue
+
         # leave blank line before next file header
         if idx > 0:
             click.echo()
@@ -99,3 +118,7 @@ def _build_message(file: str, tail_opts: TailOptions) -> str:
     if tail_opts.verbose:
         return f"==> {file} <==\n" + file_content
     return file_content
+
+
+def _follow_file(file: str, tail_opts: TailOptions):
+    ...

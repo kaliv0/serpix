@@ -27,3 +27,8 @@ ed
 
 ls ??
 curl
+
+#################################################
+
+-refactor head_ and tail_utils and merge (?)
+-add tests for head and tail invalid path checks -> test with 'head githon/ foo poem.txt'

@@ -5,6 +5,7 @@ from app.cli.commands import head
 LOG_FILE = "tests/resources/log.txt"
 POEM_FILE = "tests/resources/poem.txt"
 NON_EXISTENT_FILE = "test/resources/bazz.yaml"
+DIR_PATH = "test/resources/"
 
 
 def test_head_single_file() -> None:
@@ -131,4 +132,24 @@ How can I call the lone night good,
     assert (
         runner.invoke(head, ["-q", "-n 6", NON_EXISTENT_FILE, POEM_FILE]).output
         == expected_multiple_non_existent
+    )
+
+    # file-path is directory
+    assert (
+        runner.invoke(head, [DIR_PATH, NON_EXISTENT_FILE, POEM_FILE]).output
+        == f"""head: cannot open '{DIR_PATH}' for reading: No such file or directory
+head: cannot open '{NON_EXISTENT_FILE}' for reading: No such file or directory
+
+==> tests/resources/poem.txt <==
+Good-night? ah! no; the hour is ill
+Which severs those it should unite;
+Let us remain together still,
+Then it will be GOOD night.
+
+How can I call the lone night good,
+Though thy sweet wishes wing its flight?
+Be it not said, thought, understood -
+Then it will be - GOOD night.
+
+"""
     )

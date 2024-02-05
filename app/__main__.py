@@ -11,7 +11,9 @@ class ExceptionHandler(click.Group):
             click.echo(e, err=True)
 
 
+# @FIXME
 @click.group(cls=ExceptionHandler)
+# @click.group()
 def cli() -> None:
     pass
 

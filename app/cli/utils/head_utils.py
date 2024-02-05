@@ -37,17 +37,29 @@ def build_head_options(
 def handle_single_file(file: str, head_opts: HeadOptions) -> None:
     if os.path.exists(file) is False:
         raise ValueError(f"head: cannot open '{file}' for reading: No such file or directory")
+    if os.path.isdir(file):
+        if head_opts.verbose:
+            click.echo(f"==> {file} <==\n")
+        raise ValueError(f"head: error reading '{file}': Is a directory")
+
     message = _build_message(file, head_opts)
     click.echo(message)
 
 
 def handle_file_list(file_list: tuple[str, ...], head_opts: HeadOptions) -> None:
     for idx, file in enumerate(file_list):
+        # @TODO: extract validation and use here and in handle_single_file
         if os.path.exists(file) is False:
             click.echo(
                 f"head: cannot open '{file}' for reading: No such file or directory", err=True
             )
             continue
+        if os.path.isdir(file):
+            if head_opts.verbose:
+                click.echo(f"==> {file} <==\n")
+            click.echo(f"head: error reading '{file}': Is a directory", err=True)
+            continue
+
         # leave blank line before next file header
         if idx > 0:
             click.echo()
