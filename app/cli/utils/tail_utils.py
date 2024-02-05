@@ -12,7 +12,6 @@ class TailOptions:
     quiet: bool
     verbose: bool
     follow: bool
-    sleep_interval: int = 1
     byte_count: int = 0
     line_count: int = 10
 
@@ -21,7 +20,6 @@ def build_tail_options(
     quiet: bool,
     verbose: bool,
     follow: bool,
-    sleep_interval: int,
     byte_count: int,
     line_count: int,
     multiple_files: bool = False,
@@ -36,7 +34,7 @@ def build_tail_options(
             verbose = True
         else:
             quiet = True
-    return TailOptions(quiet, verbose, follow, sleep_interval, byte_count, line_count)
+    return TailOptions(quiet, verbose, follow, byte_count, line_count)
 
 
 # ### files ###

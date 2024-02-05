@@ -146,14 +146,6 @@ def head(
     help="output appended data as the file grows",
 )
 @click.option(
-    "-s",
-    "--sleep-interval",
-    type=click.IntRange(1),
-    default=1,
-    show_default=True,
-    help="with -f, sleep for approximately N seconds between iterations",
-)
-@click.option(
     "-c",
     "--bytes",
     "byte_count",
@@ -176,7 +168,6 @@ def tail(
     quiet: bool,
     verbose: bool,
     follow: bool,
-    sleep_interval: int = 1,
     byte_count: int = 0,
     line_count: int = 10,
 ) -> None:
@@ -187,24 +178,20 @@ def tail(
     With no FILE, or when FILE is -, read standard input.
     """
 
-    # TODO:add --follow and --sleep-interval
+    # TODO:add --follow
     # raise exception if -f is used with list of files
 
     if len(file_list) > 1:
         tail_opts = tail_utils.build_tail_options(
-            quiet, verbose, follow, sleep_interval, byte_count, line_count, multiple_files=True
+            quiet, verbose, follow, byte_count, line_count, multiple_files=True
         )
         tail_utils.handle_file_list(file_list, tail_opts)
         ...
     elif len(file_list) == 1:
-        tail_opts = tail_utils.build_tail_options(
-            quiet, verbose, follow, sleep_interval, byte_count, line_count
-        )
+        tail_opts = tail_utils.build_tail_options(quiet, verbose, follow, byte_count, line_count)
         tail_utils.handle_single_file(file_list[0], tail_opts)
     else:
-        tail_opts = tail_utils.build_tail_options(
-            quiet, verbose, follow, sleep_interval, byte_count, line_count
-        )
+        tail_opts = tail_utils.build_tail_options(quiet, verbose, follow, byte_count, line_count)
         tail_utils.read_from_sdtin(tail_opts)
 
 
