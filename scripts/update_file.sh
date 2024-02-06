@@ -1,5 +1,6 @@
-# used for testing tail -f
+#!/usr/bin/env bash
 
+# used for testing tail -f command
 val=1
 while : 
 do

@@ -193,6 +193,43 @@ def tail(
 
 # ### cat ###
 
+
+@click.command()
+@click.argument("file_list", metavar="file", type=click.Path(), nargs=-1)
+@click.option(
+    "-q",
+    "--quiet",
+    "--silent",
+    is_flag=True,
+    help="never print headers giving file names",
+)
+def cat(
+    file_list: tuple[str, ...],
+    quiet: bool,
+) -> None:
+    """
+    Concatenate FILE(s) to standard output.
+
+    With no FILE, or when FILE is -, read standard input.
+    """
+
+    #################
+    """
+    -A, --show-all           equivalent to -vET
+    -b, --number-nonblank    number nonempty output lines, overrides -n
+    -e                       equivalent to -vE
+    -E, --show-ends          display $ at end of each line
+    -n, --number             number all output lines
+    -s, --squeeze-blank      suppress repeated empty output lines
+    -t                       equivalent to -vT
+    -T, --show-tabs          display TAB characters as ^I
+    -u                       (ignored)
+    -v, --show-nonprinting   use ^ and M- notation, except for LFD and TAB
+    """
+    #################
+    ...
+
+
 # ### grep ###
 
 # ### sed ###
