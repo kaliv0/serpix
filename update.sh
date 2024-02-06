@@ -1,3 +1,5 @@
+# used for testing tail -f
+
 val=1
 while : 
 do
