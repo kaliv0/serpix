@@ -4,6 +4,7 @@ from dataclasses import dataclass
 
 import click
 
+
 # ### head_options ###
 
 
@@ -35,31 +36,15 @@ def build_head_options(
 
 
 def handle_single_file(file: str, head_opts: HeadOptions) -> None:
-    if os.path.exists(file) is False:
-        raise ValueError(f"head: cannot open '{file}' for reading: No such file or directory")
-    if os.path.isdir(file):
-        if head_opts.verbose:
-            click.echo(f"==> {file} <==\n")
-        raise ValueError(f"head: error reading '{file}': Is a directory")
-
+    _validate_file(file, head_opts, raise_error=True)
     message = _build_message(file, head_opts)
     click.echo(message)
 
 
 def handle_file_list(file_list: tuple[str, ...], head_opts: HeadOptions) -> None:
     for idx, file in enumerate(file_list):
-        # @TODO: extract validation and use here and in handle_single_file
-        if os.path.exists(file) is False:
-            click.echo(
-                f"head: cannot open '{file}' for reading: No such file or directory", err=True
-            )
+        if _validate_file(file, head_opts) is False:
             continue
-        if os.path.isdir(file):
-            if head_opts.verbose:
-                click.echo(f"==> {file} <==\n")
-            click.echo(f"head: error reading '{file}': Is a directory", err=True)
-            continue
-
         # leave blank line before next file header
         if idx > 0:
             click.echo()
@@ -83,6 +68,28 @@ def read_from_sdtin(head_opts: HeadOptions) -> None:
     for _ in range(head_opts.line_count):
         message = sys.stdin.readline().rstrip("\n")
         click.echo(message)
+
+
+# ### validate path ###
+
+
+def _validate_file(file: str, head_opts: HeadOptions, raise_error: bool = False) -> bool:
+    if os.path.exists(file) is False:
+        message = f"head: cannot open '{file}' for reading: No such file or directory"
+        if raise_error:
+            raise ValueError(message)
+        click.echo(message, err=True)
+        return False
+
+    if os.path.isdir(file):
+        if head_opts.verbose:
+            click.echo(f"==> {file} <==\n")
+        message = f"head: error reading '{file}': Is a directory"
+        if raise_error:
+            raise ValueError(message)
+        click.echo(message, err=True)
+        return False
+    return True
 
 
 # ### result messages ###

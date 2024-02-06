@@ -49,13 +49,7 @@ def build_tail_options(
 
 
 def handle_single_file(file: str, tail_opts: TailOptions) -> None:
-    if os.path.exists(file) is False:
-        raise ValueError(f"tail: cannot open '{file}' for reading: No such file or directory")
-    if os.path.isdir(file):
-        if tail_opts.verbose:
-            click.echo(f"==> {file} <==\n")
-        raise ValueError(f"tail: error reading '{file}': Is a directory")
-
+    _validate_file(file, tail_opts, raise_error=True)
     if tail_opts.follow:
         _follow_file(file, tail_opts)
     else:
@@ -65,18 +59,8 @@ def handle_single_file(file: str, tail_opts: TailOptions) -> None:
 
 def handle_file_list(file_list: tuple[str, ...], tail_opts: TailOptions) -> None:
     for idx, file in enumerate(file_list):
-        # @TODO: extract validation and use here and in handle_single_file
-        if os.path.exists(file) is False:
-            click.echo(
-                f"tail: cannot open '{file}' for reading: No such file or directory", err=True
-            )
+        if _validate_file(file, tail_opts) is False:
             continue
-        if os.path.isdir(file):
-            if tail_opts.verbose:
-                click.echo(f"==> {file} <==\n")
-            click.echo(f"tail: error reading '{file}': Is a directory", err=True)
-            continue
-
         # leave blank line before next file header
         if idx > 0:
             click.echo()
@@ -101,6 +85,26 @@ def read_from_sdtin(tail_opts: TailOptions) -> None:
     for _ in range(tail_opts.line_count):
         message = sys.stdin.readline().rstrip("\n")
         click.echo(message)
+
+
+# ### validate path ###
+def _validate_file(file: str, tail_opts: TailOptions, raise_error: bool = False) -> bool:
+    if os.path.exists(file) is False:
+        message = f"tail: cannot open '{file}' for reading: No such file or directory"
+        if raise_error:
+            raise ValueError(message)
+        click.echo(message, err=True)
+        return False
+
+    if os.path.isdir(file):
+        if tail_opts.verbose:
+            click.echo(f"==> {file} <==\n")
+        message = f"tail: error reading '{file}': Is a directory"
+        if raise_error:
+            raise ValueError(message)
+        click.echo(message, err=True)
+        return False
+    return True
 
 
 # ### result messages ###
