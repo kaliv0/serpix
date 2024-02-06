@@ -1,4 +1,5 @@
 import os
+import subprocess
 import sys
 from dataclasses import dataclass
 
@@ -39,12 +40,7 @@ def handle_single_file(file_list: tuple[str, ...], cat_opts: CatOptions | None) 
     # click.echo(message)
 
     if file != "-":
-        with open(file, "rb") as f:
-            for idx, line in enumerate(f, start=1):
-                message = line.decode().rstrip()
-                if cat_opts and cat_opts.show_all_line_numbers:
-                    message = f"{idx :>6} " + message
-                click.echo(message)
+        _read_file_content(file, cat_opts)
     else:
         for line in sys.stdin.buffer:
             # _update_file_data(line, data)
@@ -55,3 +51,20 @@ def _get_file_name(file_list: tuple[str, ...]) -> str:
     if len(file_list) == 1:
         return file_list[0]
     return "-"
+
+
+def _read_file_content(file: str, cat_opts: CatOptions) -> None:
+    with open(file, "rb") as f:
+        for idx, line in enumerate(f, start=1):
+            message = line.decode().rstrip()
+            if cat_opts and cat_opts.show_all_line_numbers:
+                message = f"{idx :>6} " + message
+            click.echo(message)
+
+
+def seed_file_from_stdin(file: str) -> None:
+    with subprocess.Popen("cat", stdout=subprocess.PIPE) as proc:
+        # if proc.stdout:
+        with open("./res.txt", "w") as f:
+            for line in proc.stdout.readlines():
+                f.write(line.decode())
