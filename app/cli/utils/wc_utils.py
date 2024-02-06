@@ -73,7 +73,7 @@ def handle_file_list(file_list: tuple[str, ...], wc_opts: WCOptions | None) -> N
         data = extract_file_data(file)
         if wc_opts is None:
             _update_total_data_no_opts(data, total_data)
-            message = _build_message_no_options(data)
+            message = _build_default_message(data)
         else:
             _update_total_data(wc_opts, data, total_data)
             message = _build_message_from_options(data, wc_opts)
@@ -115,13 +115,6 @@ def _build_message_from_options(data: FileData, wc_opts: WCOptions) -> str:
         message += f"{data.char_count :>8} "
     if wc_opts.show_bytes:
         message += f"{data.byte_count :>8} "
-    if data.file_name:
-        message += f"{data.file_name :<8}"
-    return message
-
-
-def _build_message_no_options(data: FileData) -> str:
-    message = f"{data.line_count :>8} {data.word_count :>8} {data.byte_count :>8} "
     if data.file_name:
         message += f"{data.file_name :<8}"
     return message

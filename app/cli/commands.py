@@ -1,6 +1,6 @@
 import click
 
-from app.cli.utils import head_utils, tail_utils, wc_utils
+from app.cli.utils import cat_utils, head_utils, tail_utils, wc_utils
 
 # ### wc ###
 
@@ -197,15 +197,21 @@ def tail(
 @click.command()
 @click.argument("file_list", metavar="file", type=click.Path(), nargs=-1)
 @click.option(
-    "-q",
-    "--quiet",
-    "--silent",
+    "-n",
+    "--number",
+    "show_all_line_numbers",
     is_flag=True,
-    help="never print headers giving file names",
+    help="number all output lines",
+)
+@click.option(
+    "-b",
+    "--number-nonblank",
+    "show_nonempty_line_numbers",
+    is_flag=True,
+    help="number nonempty output lines, overrides -n",
 )
 def cat(
-    file_list: tuple[str, ...],
-    quiet: bool,
+    file_list: tuple[str, ...], show_all_line_numbers: bool, show_nonempty_line_numbers: bool
 ) -> None:
     """
     Concatenate FILE(s) to standard output.
@@ -227,7 +233,11 @@ def cat(
     -v, --show-nonprinting   use ^ and M- notation, except for LFD and TAB
     """
     #################
-    ...
+    cat_opts = cat_utils.build_cat_options(show_all_line_numbers, show_nonempty_line_numbers)
+    if len(file_list) > 1:
+        cat_utils.handle_file_list(file_list, cat_opts)
+    else:
+        cat_utils.handle_single_file(file_list, cat_opts)
 
 
 # ### grep ###

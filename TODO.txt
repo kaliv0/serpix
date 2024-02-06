@@ -25,4 +25,6 @@ ls ??
 curl
 
 #################################################
-
+refactor and extract common methods:
+- 'head' and 'tail'
+- 'wc' and 'cat'
