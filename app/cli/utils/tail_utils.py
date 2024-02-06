@@ -1,8 +1,13 @@
+import io
 import os
 import sys
+import time
 from dataclasses import dataclass
+from typing import NoReturn
 
 import click
+
+SLEEP_INTERVAL = 1
 
 # ### tail_options ###
 
@@ -35,7 +40,8 @@ def build_tail_options(
         else:
             quiet = True
 
-    # @TODO: raise exception here if -f is passed with list of files?
+    if multiple_files and follow:
+        raise ValueError("tail: following multiple files is not supported")
     return TailOptions(quiet, verbose, follow, byte_count, line_count)
 
 
@@ -51,15 +57,13 @@ def handle_single_file(file: str, tail_opts: TailOptions) -> None:
         raise ValueError(f"tail: error reading '{file}': Is a directory")
 
     if tail_opts.follow:
-        return _follow_file(file, tail_opts)
-    message = _build_message(file, tail_opts)
-    click.echo(message)
+        _follow_file(file, tail_opts)
+    else:
+        message = _build_message(file, tail_opts)
+        click.echo(message)
 
 
 def handle_file_list(file_list: tuple[str, ...], tail_opts: TailOptions) -> None:
-    if tail_opts.follow:
-        click.echo("following multiple files is not supported", err=True)
-
     for idx, file in enumerate(file_list):
         # @TODO: extract validation and use here and in handle_single_file
         if os.path.exists(file) is False:
@@ -120,5 +124,17 @@ def _build_message(file: str, tail_opts: TailOptions) -> str:
     return file_content
 
 
-def _follow_file(file: str, tail_opts: TailOptions):
-    ...
+def _follow_file(file: str, tail_opts: TailOptions) -> NoReturn:
+    # NB: lines/bytes offset is supported in the original command but ignored here
+    if tail_opts.verbose:
+        click.echo(f"==> {file} <==")
+    with open(file) as f:
+        f.seek(0, io.SEEK_END)
+        while True:
+            curr_position = f.tell()
+            line = f.readline()
+            if not line:
+                f.seek(curr_position)
+                time.sleep(SLEEP_INTERVAL)
+            else:
+                click.echo(line.rstrip())
