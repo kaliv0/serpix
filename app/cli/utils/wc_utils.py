@@ -19,7 +19,7 @@ class FileData:
 # effectively a constructor
 def extract_file_data(file: str, is_empty_file_list: bool = False) -> FileData:
     data = FileData(0, 0, 0, 0, "")
-    if file and file != "-":
+    if file != "-":
         with open(file, "rb") as f:
             for line in f:
                 _update_file_data(line, data)

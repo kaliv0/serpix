@@ -38,7 +38,7 @@ def handle_single_file(file_list: tuple[str, ...], cat_opts: CatOptions | None) 
     #     message = _build_message_from_options(data, cat_opts)
     # click.echo(message)
 
-    if file and file != "-":
+    if file != "-":
         with open(file, "rb") as f:
             for idx, line in enumerate(f, start=1):
                 message = line.decode().rstrip()
