@@ -53,7 +53,7 @@ def _get_file_name(file_list: tuple[str, ...]) -> str:
     return "-"
 
 
-def _read_file_content(file: str, cat_opts: CatOptions) -> None:
+def _read_file_content(file: str, cat_opts: CatOptions | None) -> None:
     with open(file, "rb") as f:
         for idx, line in enumerate(f, start=1):
             message = line.decode().rstrip()
@@ -64,7 +64,7 @@ def _read_file_content(file: str, cat_opts: CatOptions) -> None:
 
 def seed_file_from_stdin(file: str) -> None:
     with subprocess.Popen("cat", stdout=subprocess.PIPE) as proc:
-        # if proc.stdout:
-        with open("./res.txt", "w") as f:
-            for line in proc.stdout.readlines():
-                f.write(line.decode())
+        if proc.stdout:
+            with open("./res.txt", "w") as f:
+                for line in proc.stdout.readlines():
+                    f.write(line.decode())

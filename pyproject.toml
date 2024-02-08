@@ -28,5 +28,8 @@ dev = [
 [tool.setuptools.dynamic]
 version = {attr = "app.__version__"}
 
+[tool.mypy]
+ignore_missing_imports = true
+
 [project.scripts]
 spx = "app.__main__:cli"
