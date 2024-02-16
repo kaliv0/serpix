@@ -11,7 +11,6 @@ import click
 @dataclass
 class CatOptions:
     show_all_line_numbers: bool
-    # @TODO: -b overrides -n
     show_nonempty_line_numbers: bool
 
 
@@ -32,19 +31,16 @@ def handle_single_file(file_list: tuple[str, ...], cat_opts: CatOptions | None) 
     if file != "-" and os.path.exists(file) is False:
         raise ValueError(f"cat: {file}: No such file or directory")
 
-    # data = extract_file_data(file, is_empty_file_list)
-    # if cat_opts is None:
-    #     message = _build_default_message(data)
-    # else:
-    #     message = _build_message_from_options(data, cat_opts)
-    # click.echo(message)
-
+    # @FIXME: refactor using Cat class -> idx as attribute
+    global idx
+    idx = 1
     if file != "-":
-        _read_file_content(file, cat_opts)
+        with open(file, "rb") as f:
+            for line in f:
+                _handle_file_line(line, cat_opts)
     else:
         for line in sys.stdin.buffer:
-            # _update_file_data(line, data)
-            ...
+            _handle_file_line(line, cat_opts)
 
 
 def _get_file_name(file_list: tuple[str, ...]) -> str:
@@ -53,13 +49,17 @@ def _get_file_name(file_list: tuple[str, ...]) -> str:
     return "-"
 
 
-def _read_file_content(file: str, cat_opts: CatOptions | None) -> None:
-    with open(file, "rb") as f:
-        for idx, line in enumerate(f, start=1):
-            message = line.decode().rstrip()
-            if cat_opts and cat_opts.show_all_line_numbers:
-                message = f"{idx :>6} " + message
-            click.echo(message)
+def _handle_file_line(line: bytes, cat_opts: CatOptions | None) -> None:
+    global idx
+    message = line.decode().rstrip()
+    if cat_opts:
+        if cat_opts.show_nonempty_line_numbers and message:
+            message = f"{idx :>6} " + message
+            idx += 1
+        elif cat_opts.show_all_line_numbers:
+            message = f"{idx :>6} " + message
+            idx += 1
+    click.echo(message)
 
 
 def seed_file_from_stdin(file: str) -> None:
