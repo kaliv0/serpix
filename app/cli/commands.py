@@ -1,6 +1,11 @@
 import click
 
-from app.cli.utils import cat_utils, head_utils, tail_utils, wc_utils
+from app.cli.handlers import (
+    HeadHandler,
+    TailHandler,
+    WCHandler,
+    cat_handler,
+)
 
 # ### wc ###
 
@@ -50,11 +55,11 @@ def wc(
     With no FILE, or when FILE is -, read standard input.
 
     """
-    wc_opts = wc_utils.build_wc_options(show_lines, show_words, show_chars, show_bytes)
+    wc_handler = WCHandler(show_lines, show_words, show_chars, show_bytes)
     if len(file_list) > 1:
-        wc_utils.handle_file_list(file_list, wc_opts)
+        wc_handler.handle_file_list(file_list)
     else:
-        wc_utils.handle_single_file(file_list, wc_opts)
+        wc_handler.handle_single_file(file_list)
 
 
 # ### head ###
@@ -107,18 +112,16 @@ def head(
     With no FILE, or when FILE is -, read standard input.
     """
 
+    # @ FIXME: refactor headhandler instantiation
     if len(file_list) > 1:
-        head_opts = head_utils.build_head_options(
-            quiet, verbose, byte_count, line_count, multiple_files=True
-        )
-        head_utils.handle_file_list(file_list, head_opts)
-        ...
+        head_handler = HeadHandler(quiet, verbose, byte_count, line_count, multiple_files=True)
+        head_handler.handle_file_list(file_list)
     elif len(file_list) == 1:
-        head_opts = head_utils.build_head_options(quiet, verbose, byte_count, line_count)
-        head_utils.handle_single_file(file_list[0], head_opts)
+        head_handler = HeadHandler(quiet, verbose, byte_count, line_count)
+        head_handler.handle_single_file(file_list[0])
     else:
-        head_opts = head_utils.build_head_options(quiet, verbose, byte_count, line_count)
-        head_utils.read_from_sdtin(head_opts)
+        head_handler = HeadHandler(quiet, verbose, byte_count, line_count)
+        head_handler.read_from_sdtin()
 
 
 # ### tail ###
@@ -179,16 +182,16 @@ def tail(
     """
 
     if len(file_list) > 1:
-        tail_opts = tail_utils.build_tail_options(
+        tail_handler = TailHandler(
             quiet, verbose, follow, byte_count, line_count, multiple_files=True
         )
-        tail_utils.handle_file_list(file_list, tail_opts)
+        tail_handler.handle_file_list(file_list)
     elif len(file_list) == 1:
-        tail_opts = tail_utils.build_tail_options(quiet, verbose, follow, byte_count, line_count)
-        tail_utils.handle_single_file(file_list[0], tail_opts)
+        tail_handler = TailHandler(quiet, verbose, follow, byte_count, line_count)
+        tail_handler.handle_single_file(file_list[0])
     else:
-        tail_opts = tail_utils.build_tail_options(quiet, verbose, follow, byte_count, line_count)
-        tail_utils.read_from_sdtin(tail_opts)
+        tail_handler = TailHandler(quiet, verbose, follow, byte_count, line_count)
+        tail_handler.read_from_sdtin()
 
 
 # ### cat ###
@@ -233,11 +236,11 @@ def cat(
     -v, --show-nonprinting   use ^ and M- notation, except for LFD and TAB
     """
     #################
-    cat_opts = cat_utils.build_cat_options(show_all_line_numbers, show_nonempty_line_numbers)
+    cat_opts = cat_handler.build_cat_options(show_all_line_numbers, show_nonempty_line_numbers)
     if len(file_list) > 1:
-        cat_utils.handle_file_list(file_list, cat_opts)
+        cat_handler.handle_file_list(file_list, cat_opts)
     else:
-        cat_utils.handle_single_file(file_list, cat_opts)
+        cat_handler.handle_single_file(file_list, cat_opts)
 
 
 # ### grep ###
