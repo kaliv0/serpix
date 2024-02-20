@@ -44,14 +44,7 @@ class WCHandler:
         self.show_bytes = show_bytes
 
     def _opts_exist(self) -> bool:
-        if (
-            not self.show_lines
-            and not self.show_words
-            and not self.show_chars
-            and not self.show_bytes
-        ):
-            return False
-        return True
+        return self.show_lines or self.show_words or self.show_chars or self.show_bytes
 
     # ### files ###
 
@@ -88,7 +81,8 @@ class WCHandler:
             message = self._build_message_from_options(data)
         click.echo(message)
 
-    def _get_file_name(self, file_list: tuple[str, ...]) -> tuple[str, bool]:
+    @staticmethod
+    def _get_file_name(file_list: tuple[str, ...]) -> tuple[str, bool]:
         if len(file_list) == 1:
             return file_list[0], False
         return "-", True
@@ -109,7 +103,8 @@ class WCHandler:
             message += f"{data.file_name :<8}"
         return message
 
-    def _build_default_message(self, data: FileData) -> str:
+    @staticmethod
+    def _build_default_message(data: FileData) -> str:
         message = f"{data.line_count :>8} {data.word_count :>8} {data.byte_count :>8} "
         if data.file_name:
             message += f"{data.file_name :<8}"
@@ -120,8 +115,7 @@ class WCHandler:
             return f"{total_data.line_count :>8} {total_data.word_count :>8} {total_data.byte_count :>8} {'total' :<8}"
         return self._build_message_from_options(total_data)
 
-    # @FIXME: extract as separate function outside class?
-    # ### total file_data ###
+    # ### handle total file_data ###
 
     def _update_total_data(self, curr_data: FileData, total_data: FileData) -> None:
         if self.show_lines:
@@ -133,7 +127,8 @@ class WCHandler:
         if self.show_bytes:
             total_data.byte_count += curr_data.byte_count
 
-    def _update_total_data_no_opts(self, curr_data: FileData, total_data: FileData) -> None:
+    @staticmethod
+    def _update_total_data_no_opts(curr_data: FileData, total_data: FileData) -> None:
         total_data.line_count += curr_data.line_count
         total_data.word_count += curr_data.word_count
         total_data.byte_count += curr_data.byte_count

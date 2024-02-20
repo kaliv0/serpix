@@ -1,10 +1,10 @@
 import click
 
 from app.cli.handlers import (
+    CatHandler,
     HeadHandler,
     TailHandler,
     WCHandler,
-    cat_handler,
 )
 
 # ### wc ###
@@ -121,7 +121,7 @@ def head(
         head_handler.handle_single_file(file_list[0])
     else:
         head_handler = HeadHandler(quiet, verbose, byte_count, line_count)
-        head_handler.read_from_sdtin()
+        head_handler.read_from_stdin()
 
 
 # ### tail ###
@@ -191,7 +191,7 @@ def tail(
         tail_handler.handle_single_file(file_list[0])
     else:
         tail_handler = TailHandler(quiet, verbose, follow, byte_count, line_count)
-        tail_handler.read_from_sdtin()
+        tail_handler.read_from_stdin()
 
 
 # ### cat ###
@@ -211,7 +211,7 @@ def tail(
     "--number-nonblank",
     "show_nonempty_line_numbers",
     is_flag=True,
-    help="number nonempty output lines, overrides -n",
+    help="number nonempty output lines",
 )
 def cat(
     file_list: tuple[str, ...], show_all_line_numbers: bool, show_nonempty_line_numbers: bool
@@ -236,11 +236,11 @@ def cat(
     -v, --show-nonprinting   use ^ and M- notation, except for LFD and TAB
     """
     #################
-    cat_opts = cat_handler.build_cat_options(show_all_line_numbers, show_nonempty_line_numbers)
+    cat_handler = CatHandler(show_all_line_numbers, show_nonempty_line_numbers)
     if len(file_list) > 1:
-        cat_handler.handle_file_list(file_list, cat_opts)
+        cat_handler.handle_file_list(file_list)
     else:
-        cat_handler.handle_single_file(file_list, cat_opts)
+        cat_handler.handle_single_file(file_list)
 
 
 # ### grep ###

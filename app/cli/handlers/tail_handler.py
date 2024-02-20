@@ -37,7 +37,7 @@ class TailHandler:
         self.follow = follow
         self.byte_count = byte_count
         self.line_count = line_count
-        self.sleep_interval = 1  # @FOXME: extract as class const?
+        self.sleep_interval = 1  # @FIXME: extract as class const?
 
     # ### files ###
 
@@ -59,12 +59,12 @@ class TailHandler:
             message = self._build_message(file)
             click.echo(message)
 
-    def read_from_sdtin(self) -> None:
+    def read_from_stdin(self) -> None:
         if self.verbose:
             click.echo("==> standard input <==")
         # NB: originally if -n is negative 'tail' enters an infinite loop
         if self.line_count <= 0:
-            click.echo("Serriously?!")
+            click.echo("Seriously?!")
             return
         # other options (line_count) are discarded
         if self.byte_count:

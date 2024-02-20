@@ -13,6 +13,8 @@ class ExceptionHandler(click.Group):
             click.echo(e, err=True)
 
 
+# NB: since all commands use nargs=-1
+# this prevents from using built-in click option for chaining them
 # @FIXME
 # @click.group(cls=ExceptionHandler)
 @click.group()

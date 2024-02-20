@@ -47,12 +47,12 @@ class HeadHandler:
             message = self._build_message(file)
             click.echo(message)
 
-    def read_from_sdtin(self) -> None:
+    def read_from_stdin(self) -> None:
         if self.verbose:
             click.echo("==> standard input <==")
         # NB: originally if -n is negative 'head' enters an infinite loop
         if self.line_count <= 0:
-            click.echo("Serriously?!")
+            click.echo("Seriously?!")
             return
         # other options (line_count) are discarded
         if self.byte_count:
