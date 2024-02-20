@@ -5,7 +5,9 @@ import click
 
 
 class CatHandler:
-    def __init__(self, show_all_line_numbers: bool, show_nonempty_line_numbers: bool) -> None:
+    def __init__(
+        self, show_all_line_numbers: bool, show_nonempty_line_numbers: bool, squeeze_blank: bool
+    ) -> None:
         # NB: in the original if -n and -b are passed simultaneously
         # option -b overrides -n
         if show_all_line_numbers and show_nonempty_line_numbers:
@@ -14,10 +16,13 @@ class CatHandler:
         # setting cat_options
         self.show_all_line_numbers = show_all_line_numbers
         self.show_nonempty_line_numbers = show_nonempty_line_numbers
+        self.squeeze_blank = squeeze_blank
+        # helper variables used with options
         self.line_number = 1
+        self.previous_line = None
 
     def _opts_exist(self) -> bool:
-        return self.show_all_line_numbers or self.show_nonempty_line_numbers
+        return self.show_all_line_numbers or self.show_nonempty_line_numbers or self.squeeze_blank
 
     def handle_file_list(self, file_list: tuple[str, ...]) -> None:
         ...
@@ -43,9 +48,14 @@ class CatHandler:
         return "-"
 
     def _handle_file_line(self, line: bytes) -> None:
-        message = line.decode().rstrip()
+        curr_line = line.decode().rstrip()
+        message = curr_line
         if self._opts_exist():
+            if self.squeeze_blank and curr_line == "" and self.previous_line == "":
+                self.previous_line = curr_line
+                return
             if (self.show_nonempty_line_numbers and message) or self.show_all_line_numbers:
                 message = f"{self.line_number :>6} " + message
                 self.line_number += 1
         click.echo(message)
+        self.previous_line = curr_line

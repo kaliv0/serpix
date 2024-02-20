@@ -213,8 +213,17 @@ def tail(
     is_flag=True,
     help="number nonempty output lines",
 )
+@click.option(
+    "-s",
+    "--squeeze-blank",
+    is_flag=True,
+    help="suppress repeated empty output lines",
+)
 def cat(
-    file_list: tuple[str, ...], show_all_line_numbers: bool, show_nonempty_line_numbers: bool
+    file_list: tuple[str, ...],
+    show_all_line_numbers: bool,
+    show_nonempty_line_numbers: bool,
+    squeeze_blank: bool,
 ) -> None:
     """
     Concatenate FILE(s) to standard output.
@@ -224,19 +233,12 @@ def cat(
 
     #################
     """
-    -A, --show-all           equivalent to -vET
-    -b, --number-nonblank    number nonempty output lines, overrides -n
-    -e                       equivalent to -vE
+    -A, --show-all           equivalent to -ET
     -E, --show-ends          display $ at end of each line
-    -n, --number             number all output lines
-    -s, --squeeze-blank      suppress repeated empty output lines
-    -t                       equivalent to -vT
     -T, --show-tabs          display TAB characters as ^I
-    -u                       (ignored)
-    -v, --show-nonprinting   use ^ and M- notation, except for LFD and TAB
     """
     #################
-    cat_handler = CatHandler(show_all_line_numbers, show_nonempty_line_numbers)
+    cat_handler = CatHandler(show_all_line_numbers, show_nonempty_line_numbers, squeeze_blank)
     if len(file_list) > 1:
         cat_handler.handle_file_list(file_list)
     else:
