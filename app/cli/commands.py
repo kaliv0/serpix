@@ -219,11 +219,18 @@ def tail(
     is_flag=True,
     help="suppress repeated empty output lines",
 )
+@click.option(
+    "-E",
+    "--show-ends",
+    is_flag=True,
+    help="display $ at end of each line",
+)
 def cat(
     file_list: tuple[str, ...],
     show_all_line_numbers: bool,
     show_nonempty_line_numbers: bool,
     squeeze_blank: bool,
+    show_ends:bool
 ) -> None:
     """
     Concatenate FILE(s) to standard output.
@@ -238,7 +245,7 @@ def cat(
     -T, --show-tabs          display TAB characters as ^I
     """
     #################
-    cat_handler = CatHandler(show_all_line_numbers, show_nonempty_line_numbers, squeeze_blank)
+    cat_handler = CatHandler(show_all_line_numbers, show_nonempty_line_numbers, squeeze_blank, show_ends)
     if len(file_list) > 1:
         cat_handler.handle_file_list(file_list)
     else:
