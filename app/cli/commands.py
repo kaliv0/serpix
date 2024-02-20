@@ -225,12 +225,19 @@ def tail(
     is_flag=True,
     help="display $ at end of each line",
 )
+@click.option(
+    "-T",
+    "--show-tabs",
+    is_flag=True,
+    help="display TAB characters as ^I",
+)
 def cat(
     file_list: tuple[str, ...],
     show_all_line_numbers: bool,
     show_nonempty_line_numbers: bool,
     squeeze_blank: bool,
-    show_ends:bool
+    show_ends: bool,
+    show_tabs: bool,
 ) -> None:
     """
     Concatenate FILE(s) to standard output.
@@ -241,11 +248,12 @@ def cat(
     #################
     """
     -A, --show-all           equivalent to -ET
-    -E, --show-ends          display $ at end of each line
     -T, --show-tabs          display TAB characters as ^I
     """
     #################
-    cat_handler = CatHandler(show_all_line_numbers, show_nonempty_line_numbers, squeeze_blank, show_ends)
+    cat_handler = CatHandler(
+        show_all_line_numbers, show_nonempty_line_numbers, squeeze_blank, show_ends, show_tabs
+    )
     if len(file_list) > 1:
         cat_handler.handle_file_list(file_list)
     else:

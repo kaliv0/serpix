@@ -11,6 +11,7 @@ class CatHandler:
         show_nonempty_line_numbers: bool,
         squeeze_blank: bool,
         show_ends: bool,
+        show_tabs: bool,
     ) -> None:
         # NB: in the original if -n and -b are passed simultaneously
         # option -b overrides -n
@@ -22,6 +23,7 @@ class CatHandler:
         self.show_nonempty_line_numbers = show_nonempty_line_numbers
         self.squeeze_blank = squeeze_blank
         self.show_ends = show_ends
+        self.show_tabs = show_tabs
 
         # helper variables used with options
         self.line_number = 1
@@ -33,6 +35,7 @@ class CatHandler:
             or self.show_nonempty_line_numbers
             or self.squeeze_blank
             or self.show_ends
+            or self.show_tabs
         )
 
     def handle_file_list(self, file_list: tuple[str, ...]) -> None:
@@ -71,5 +74,7 @@ class CatHandler:
                 self.line_number += 1
             if self.show_ends:
                 message += "$"
+            if self.show_tabs:
+                message = message.replace("    ", "^")
         click.echo(message)
         self.previous_line = curr_line
