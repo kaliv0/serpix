@@ -231,6 +231,12 @@ def tail(
     is_flag=True,
     help="display TAB characters as ^I",
 )
+@click.option(
+    "-A",
+    "--show-all",
+    is_flag=True,
+    help="equivalent to -ET",
+)
 def cat(
     file_list: tuple[str, ...],
     show_all_line_numbers: bool,
@@ -238,6 +244,7 @@ def cat(
     squeeze_blank: bool,
     show_ends: bool,
     show_tabs: bool,
+    show_all: bool,
 ) -> None:
     """
     Concatenate FILE(s) to standard output.
@@ -248,11 +255,10 @@ def cat(
     #################
     """
     -A, --show-all           equivalent to -ET
-    -T, --show-tabs          display TAB characters as ^I
     """
     #################
     cat_handler = CatHandler(
-        show_all_line_numbers, show_nonempty_line_numbers, squeeze_blank, show_ends, show_tabs
+        show_all_line_numbers, show_nonempty_line_numbers, squeeze_blank, show_ends, show_tabs, show_all
     )
     if len(file_list) > 1:
         cat_handler.handle_file_list(file_list)

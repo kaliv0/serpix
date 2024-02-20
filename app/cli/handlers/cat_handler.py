@@ -12,6 +12,7 @@ class CatHandler:
         squeeze_blank: bool,
         show_ends: bool,
         show_tabs: bool,
+        show_all: bool,
     ) -> None:
         # NB: in the original if -n and -b are passed simultaneously
         # option -b overrides -n
@@ -22,8 +23,12 @@ class CatHandler:
         self.show_all_line_numbers = show_all_line_numbers
         self.show_nonempty_line_numbers = show_nonempty_line_numbers
         self.squeeze_blank = squeeze_blank
-        self.show_ends = show_ends
-        self.show_tabs = show_tabs
+        if show_all:
+            self.show_ends = True
+            self.show_tabs = True
+        else:
+            self.show_ends = show_ends
+            self.show_tabs = show_tabs
 
         # helper variables used with options
         self.line_number = 1

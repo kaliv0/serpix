@@ -25,6 +25,7 @@ While children are struggling to be unique, the world around them is trying all 
 These Capitalists Generally Act Harmoniously And In Concert, To Fleece The People.
 """
     )
+
     # single option
     assert (
         runner.invoke(cat, ["-n", QUOTE_FILE]).output
@@ -40,6 +41,7 @@ These Capitalists Generally Act Harmoniously And In Concert, To Fleece The Peopl
     10 These Capitalists Generally Act Harmoniously And In Concert, To Fleece The People.
 """
     )
+
     assert (
         runner.invoke(cat, ["-b", ALT_FILE]).output
         == """     1 I Don'T Believe In Failure. It Is Not Failure If You Enjoyed The Process.
@@ -59,6 +61,7 @@ These Capitalists Generally Act Harmoniously And In Concert, To Fleece The Peopl
     10     The less of the World, the freer you live.
 """
     )
+
     assert (
         runner.invoke(cat, ["-s", ALT_FILE]).output
         == """I Don'T Believe In Failure. It Is Not Failure If You Enjoyed The Process.
@@ -76,6 +79,7 @@ Everyone has been made for some particular work, and the desire for that work ha
     The less of the World, the freer you live.
 """
     )
+
     assert (
         runner.invoke(cat, ["-E", ALT_FILE]).output
         == """I Don'T Believe In Failure. It Is Not Failure If You Enjoyed The Process.$
@@ -95,6 +99,7 @@ Everyone has been made for some particular work, and the desire for that work ha
     The less of the World, the freer you live.$
 """
     )
+
     assert (
         runner.invoke(cat, ["-T", ALT_FILE]).output
         == """I Don'T Believe In Failure. It Is Not Failure If You Enjoyed The Process.
@@ -113,6 +118,30 @@ People Must Learn To Hate And If They Can Learn To Hate, They Can Be Taught To L
 Everyone has been made for some particular work, and the desire for that work has been put in every heart.
 ^The less of the World, the freer you live.
 """
+    )
+
+    assert (
+        runner.invoke(cat, ["-A", ALT_FILE]).output
+        == """I Don'T Believe In Failure. It Is Not Failure If You Enjoyed The Process.$
+Do not get elated at any victory, for all such victory is subject to the will of God.$
+$
+Wear gratitude like a cloak and it will feed every corner of your life.$
+If you even dream of beating me you'd better wake up and apologize.$
+$
+I Will Praise Any Man That Will Praise Me.$
+^One Of The Greatest Diseases Is To Be Nobody To Anybody.$
+I'm so fast that last night I turned off the light switch in my hotel room and was in bed before the room was dark.$
+$
+$
+$
+People Must Learn To Hate And If They Can Learn To Hate, They Can Be Taught To Love.$
+Everyone has been made for some particular work, and the desire for that work has been put in every heart.$
+^The less of the World, the freer you live.$
+"""
+    )
+
+    assert (
+        runner.invoke(cat, ["-A", ALT_FILE]).output == runner.invoke(cat, ["-ET", ALT_FILE]).output
     )
 
     # combined options
