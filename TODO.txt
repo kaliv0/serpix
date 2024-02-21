@@ -21,7 +21,4 @@ ed
 (vi -> depends on ed and sed)
 
 ls ??
-curl
-
-#################################################
-to run separate tests -> .tox/test/bin/pytest tests/test_cat.py 
+curl ??

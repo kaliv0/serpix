@@ -15,9 +15,9 @@ class TailHandler:
         quiet: bool,
         verbose: bool,
         follow: bool,
+        multiple_files: bool,
         byte_count: int = 0,
         line_count: int = 10,
-        multiple_files: bool = False,
     ) -> None:
         # NB: in the original if -v and -q are passed simultaneously
         # the second option overrides the first one
@@ -119,7 +119,7 @@ class TailHandler:
         # NB: lines/bytes offset is supported in the original command but ignored here
         if self.verbose:
             click.echo(f"==> {file} <==")
-        with open(file) as f:
+        with open(file, "r") as f:
             f.seek(0, io.SEEK_END)
             while True:
                 curr_position = f.tell()

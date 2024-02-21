@@ -55,6 +55,7 @@ def wc(
     With no FILE, or when FILE is -, read standard input.
 
     """
+
     wc_handler = WCHandler(show_lines, show_words, show_chars, show_bytes)
     if len(file_list) > 1:
         wc_handler.handle_file_list(file_list)
@@ -112,15 +113,13 @@ def head(
     With no FILE, or when FILE is -, read standard input.
     """
 
-    # @ FIXME: refactor headhandler instantiation -> remove default value of multiple_files
+    multiple_files = True if len(file_list) > 1 else False
+    head_handler = HeadHandler(quiet, verbose, multiple_files, byte_count, line_count)
     if len(file_list) > 1:
-        head_handler = HeadHandler(quiet, verbose, byte_count, line_count, multiple_files=True)
         head_handler.handle_file_list(file_list)
     elif len(file_list) == 1:
-        head_handler = HeadHandler(quiet, verbose, byte_count, line_count)
         head_handler.handle_single_file(file_list[0])
     else:
-        head_handler = HeadHandler(quiet, verbose, byte_count, line_count)
         head_handler.read_from_stdin()
 
 
@@ -181,17 +180,13 @@ def tail(
     With no FILE, or when FILE is -, read standard input.
     """
 
-    # @ FIXME: refactor tailhandler instantiation -> remove default value of multiple_files
+    multiple_files = True if len(file_list) > 1 else False
+    tail_handler = TailHandler(quiet, verbose, follow, multiple_files, byte_count, line_count)
     if len(file_list) > 1:
-        tail_handler = TailHandler(
-            quiet, verbose, follow, byte_count, line_count, multiple_files=True
-        )
         tail_handler.handle_file_list(file_list)
     elif len(file_list) == 1:
-        tail_handler = TailHandler(quiet, verbose, follow, byte_count, line_count)
         tail_handler.handle_single_file(file_list[0])
     else:
-        tail_handler = TailHandler(quiet, verbose, follow, byte_count, line_count)
         tail_handler.read_from_stdin()
 
 
@@ -282,6 +277,8 @@ def cat(
 ###### ???????? ######
 
 # ### diff -> without pager ###
+
+# ### comm ###
 
 # ### more ###
 

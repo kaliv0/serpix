@@ -9,9 +9,9 @@ class HeadHandler:
         self,
         quiet: bool,
         verbose: bool,
+        multiple_files: bool,
         byte_count: int = 0,
         line_count: int = 10,
-        multiple_files: bool = False,
     ) -> None:
         # NB: in the original if -v and -q are passed simultaneously
         # the second option overrides the first one
