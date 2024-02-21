@@ -8,6 +8,8 @@ import click
 
 
 class TailHandler:
+    SLEEP_INTERVAL = 1
+
     def __init__(
         self,
         quiet: bool,
@@ -37,7 +39,6 @@ class TailHandler:
         self.follow = follow
         self.byte_count = byte_count
         self.line_count = line_count
-        self.sleep_interval = 1  # @FIXME: extract as class const?
 
     # ### files ###
 
@@ -68,7 +69,6 @@ class TailHandler:
             return
         # other options (line_count) are discarded
         if self.byte_count:
-            # @FIXME:
             message = sys.stdin.buffer.readline()[: self.byte_count].decode()
             click.echo(message)
             return
@@ -126,6 +126,6 @@ class TailHandler:
                 line = f.readline()
                 if not line:
                     f.seek(curr_position)
-                    time.sleep(self.sleep_interval)
+                    time.sleep(self.SLEEP_INTERVAL)
                 else:
                     click.echo(line.rstrip())

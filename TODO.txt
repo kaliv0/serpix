@@ -24,6 +24,4 @@ ls ??
 curl
 
 #################################################
-refactor and extract common methods:
-- 'head' and 'tail'
-- 'wc' and 'cat'
+to run separate tests -> .tox/test/bin/pytest tests/test_cat.py 

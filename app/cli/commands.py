@@ -112,7 +112,7 @@ def head(
     With no FILE, or when FILE is -, read standard input.
     """
 
-    # @ FIXME: refactor headhandler instantiation
+    # @ FIXME: refactor headhandler instantiation -> remove default value of multiple_files
     if len(file_list) > 1:
         head_handler = HeadHandler(quiet, verbose, byte_count, line_count, multiple_files=True)
         head_handler.handle_file_list(file_list)
@@ -181,6 +181,7 @@ def tail(
     With no FILE, or when FILE is -, read standard input.
     """
 
+    # @ FIXME: refactor tailhandler instantiation -> remove default value of multiple_files
     if len(file_list) > 1:
         tail_handler = TailHandler(
             quiet, verbose, follow, byte_count, line_count, multiple_files=True
@@ -252,13 +253,13 @@ def cat(
     With no FILE, or when FILE is -, read standard input.
     """
 
-    #################
-    """
-    -A, --show-all           equivalent to -ET
-    """
-    #################
     cat_handler = CatHandler(
-        show_all_line_numbers, show_nonempty_line_numbers, squeeze_blank, show_ends, show_tabs, show_all
+        show_all_line_numbers,
+        show_nonempty_line_numbers,
+        squeeze_blank,
+        show_ends,
+        show_tabs,
+        show_all,
     )
     if len(file_list) > 1:
         cat_handler.handle_file_list(file_list)

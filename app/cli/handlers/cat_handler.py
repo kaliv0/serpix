@@ -45,31 +45,28 @@ class CatHandler:
 
     def handle_file_list(self, file_list: tuple[str, ...]) -> None:
         for file in file_list:
-            if file != "-" and os.path.exists(file) is False:
-                click.echo(f"cat: {file}: No such file or directory", err=True)
-                continue
-            # @FIXME: refactor using if file != "-" twice
-            if file != "-":
+            if file == "-":
+                for line in sys.stdin.buffer:
+                    self._handle_file_line(line)
+            else:
+                if os.path.exists(file) is False:
+                    click.echo(f"cat: {file}: No such file or directory", err=True)
+                    continue
                 with open(file, "rb") as f:
                     for line in f:
                         self._handle_file_line(line)
-            else:
-                for line in sys.stdin.buffer:
-                    self._handle_file_line(line)
 
     def handle_single_file(self, file_list: tuple[str, ...]) -> None:
         file = self._get_file_name(file_list)
-        # @FIXME: refactor using if file != "-" twice
-        if file != "-" and os.path.exists(file) is False:
-            raise ValueError(f"cat: {file}: No such file or directory")
-
-        if file != "-":
+        if file == "-":
+            for line in sys.stdin.buffer:
+                self._handle_file_line(line)
+        else:
+            if os.path.exists(file) is False:
+                raise ValueError(f"cat: {file}: No such file or directory")
             with open(file, "rb") as f:
                 for line in f:
                     self._handle_file_line(line)
-        else:
-            for line in sys.stdin.buffer:
-                self._handle_file_line(line)
 
     @staticmethod
     def _get_file_name(file_list: tuple[str, ...]) -> str:
@@ -82,6 +79,7 @@ class CatHandler:
         message = curr_line
         if self._opts_exist():
             # @TODO: extract as separate method for handling empty lines
+            # together with keeping track of current/previous line
             if self.squeeze_blank and curr_line == "" and self.previous_line == "":
                 self.previous_line = curr_line
                 return
