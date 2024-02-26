@@ -6,6 +6,7 @@ from app.cli.handlers import (
     TailHandler,
     WCHandler,
 )
+from app.cli.handlers.cut_handler import CutHandler
 
 # ### wc ###
 
@@ -268,6 +269,13 @@ def cat(
 @click.command()
 @click.argument("file_list", metavar="file", type=click.Path(), nargs=-1)
 @click.option(
+    "-b",
+    "--bytes",
+    "byte_count",
+    type=click.STRING,
+    help="select only these bytes",
+)
+@click.option(
     "-c",
     "--characters",
     "char_count",
@@ -298,31 +306,40 @@ the default is to use the input delimiter""",
 @click.option(
     "-s",
     "--only-delimited",
-    "skip_undelimited_lines",
+    "show_only_delimited_lines",
     is_flag=True,
     help="""use STRING as the output delimiter
 the default is to use the input delimiter""",
 )
 def cut(
     file_list: tuple[str, ...],
+    byte_count: str,
     char_count: str,
     field_count: str,
     delimiter: str,
     output_delimiter: str,
-    skip_undelimited_lines: bool,  # TODO: rename
+    show_only_delimited_lines: bool,
 ) -> None:
     """
     Print selected parts of lines from each FILE to standard output.
 
     With no FILE, or when FILE is -, read standard input.
     """
-    ...
+
+    cut_handler = CutHandler(
+        byte_count, char_count, field_count, delimiter, output_delimiter, show_only_delimited_lines
+    )
+    if len(file_list) > 1:
+        cut_handler.handle_file_list(file_list)
+    else:
+        cut_handler.handle_single_file(file_list)
 
     """
+    -b, --bytes
     -c, --chars
     -f, -fields
+    ===================
     -d, --delimiter
-    {{ -b, --bytes }}
     --ouput-delimiter
     -s -> ignore fields with no delimiter
     """
