@@ -263,13 +263,69 @@ def cat(
 
 
 # ### cut ###
-"""
--c, --chars
--f, -fields
--d, --delimiter
-{{ -b, --bytes }}
---ouput-delimiter
-"""
+
+
+@click.command()
+@click.argument("file_list", metavar="file", type=click.Path(), nargs=-1)
+@click.option(
+    "-c",
+    "--characters",
+    "char_count",
+    type=click.STRING,
+    help="select only these characters",
+)
+@click.option(
+    "-f",
+    "--fields",
+    "field_count",
+    type=click.STRING,
+    help="""select only these fields;  
+also print any line that contains no delimiter character""",
+)
+@click.option(
+    "-d",
+    "--delimiter",
+    type=click.STRING,
+    default="\t",
+    help="use DELIM instead of TAB for field delimiter",
+)
+@click.option(
+    "--output-delimiter",
+    type=click.STRING,
+    help="""use STRING as the output delimiter
+the default is to use the input delimiter""",
+)
+@click.option(
+    "-s",
+    "--only-delimited",
+    "skip_undelimited_lines",
+    is_flag=True,
+    help="""use STRING as the output delimiter
+the default is to use the input delimiter""",
+)
+def cut(
+    file_list: tuple[str, ...],
+    char_count: str,
+    field_count: str,
+    delimiter: str,
+    output_delimiter: str,
+    skip_undelimited_lines: bool,  # TODO: rename
+) -> None:
+    """
+    Print selected parts of lines from each FILE to standard output.
+
+    With no FILE, or when FILE is -, read standard input.
+    """
+    ...
+
+    """
+    -c, --chars
+    -f, -fields
+    -d, --delimiter
+    {{ -b, --bytes }}
+    --ouput-delimiter
+    -s -> ignore fields with no delimiter
+    """
 
 
 # ### uniq ###
