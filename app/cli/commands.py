@@ -262,26 +262,51 @@ def cat(
         cat_handler.handle_single_file(file_list)
 
 
+# ### cut ###
+"""
+-c, --chars
+-f, -fields
+-d, --delimiter
+{{ -b, --bytes }}
+--ouput-delimiter
+"""
+
+
+# ### uniq ###
+"""
+-c, --count
+-i, --ignore-case,
+-d, --repeated,
+-f, --skip-fields,
+-s, --skip-chars,
+-u, --unique ???
+"""
+
+# ### sort ###
+"""
+-o, --output-file
+-r, reverse,
+-n, sort numerically,
+-k, sort based on column number,
+-c, check if sorted,
+-u, sort and remove duplicate lines,
+-M -> sort my months name ???
+"""
+
 # ### grep ###
 
 # ### sed ###
 
 # ### tr ###
 
-# ### cut ###
-
-# ### sort ###
-
-# ### uniq ###
-
 ###### ???????? ######
 
-# ### diff -> without pager ###
+# ### diff -> click's pager ###
 
 # ### comm ###
 
 # ### more ###
 
-# ### less ###
+# ### less -> use cat with click's pager?? ###
 
 # ### crontab ###
