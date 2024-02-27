@@ -23,7 +23,7 @@ class CutHandler:
         self.field_count = self._read_range(field_count) if field_count else None
 
         self.delimiter = delimiter if delimiter else "\t"
-        self.output_delimiter = output_delimiter if output_delimiter else delimiter
+        self.output_delimiter = output_delimiter if output_delimiter else self.delimiter
         self.show_only_delimited_lines = show_only_delimited_lines
 
     @staticmethod
@@ -58,7 +58,6 @@ class CutHandler:
             else:
                 start = int(arg_list[0]) - 1 if arg_list[0] else 0
                 stop = int(arg_list[1]) if arg_list[1] else 10_000  # quasi Integer.MAX_VALUE
-            click.echo(f"{start=} {stop=}")
         except (ValueError, Exception):
             # raise error if start or stop are not valid integers
             raise ValueError(f"cut: invalid option value '{arg}'")
@@ -112,7 +111,6 @@ class CutHandler:
         # cut selected part of text
         # NB: counts starts from zeroth index -> for this reason explicitly use 'is not None'
         if self.field_count is not None:
-            # @FIXME: simplify?
             curr_line = self.output_delimiter.join(
                 curr_line.split(self.delimiter)[self.field_count]
             )

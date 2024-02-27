@@ -318,7 +318,6 @@ def cut(
 
     With no FILE, or when FILE is -, read standard input.
     """
-
     cut_handler = CutHandler(
         byte_count, char_count, field_count, delimiter, output_delimiter, show_only_delimited_lines
     )
@@ -354,6 +353,8 @@ def cut(
 # ### sed ###
 
 # ### tr ###
+
+# ### find ###
 
 ###### ???????? ######
 
