@@ -1,12 +1,6 @@
 import click
 
-from app.cli.handlers import (
-    CatHandler,
-    HeadHandler,
-    TailHandler,
-    WCHandler,
-)
-from app.cli.handlers.cut_handler import CutHandler
+from app.cli.handlers import CatHandler, CutHandler, HeadHandler, TailHandler, WCHandler
 
 # ### wc ###
 
@@ -294,7 +288,6 @@ also print any line that contains no delimiter character""",
     "-d",
     "--delimiter",
     type=click.STRING,
-    default="\t",
     help="use DELIM instead of TAB for field delimiter",
 )
 @click.option(
@@ -333,16 +326,6 @@ def cut(
         cut_handler.handle_file_list(file_list)
     else:
         cut_handler.handle_single_file(file_list)
-
-    """
-    -b, --bytes
-    -c, --chars
-    -f, -fields
-    ===================
-    -d, --delimiter
-    --ouput-delimiter
-    -s -> ignore fields with no delimiter
-    """
 
 
 # ### uniq ###
