@@ -157,6 +157,12 @@ oryx' # 'Writing Word Macros' # '1999
 """
     )
 
+    ## invalid options
+    assert (
+        runner.invoke(cut, ["-c1", "-d,", TSV_FILE]).exception.args[0]
+        == "cut: an input delimiter may be specified only when operating on fields"
+    )
+
 
 def test_cut_file_list() -> None:
     runner = CliRunner()
