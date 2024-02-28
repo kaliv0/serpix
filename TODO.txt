@@ -21,3 +21,12 @@ ed
 
 ls ??
 curl ??
+
+-----------------------------
+
+to refactor:
+- combine classes with similar methods (head, tail; cat, cut) into OOP hierarchies
+- unify functionlities for reading single file and list of files -> use only lists
+- extract expected output for tests -> 
+- test errors -> included in result.output??
+- migrate to poetry and remove tox
