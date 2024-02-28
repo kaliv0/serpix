@@ -1,12 +1,12 @@
 grep 
 sed 
 tr 
-cut 
 sort 
 uniq 
+find
 -----------------------------
 comm?
-diff -> without pager -> see Tsoding daily and github repo 
+diff
 patch (depends on diff?)
 more? 
 less? 
@@ -15,7 +15,6 @@ find
 xargs
 hexdump
 sh
-(blog -> see Zed Shaw?)
 bc
 ed
 (vi -> depends on ed and sed)

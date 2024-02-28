@@ -12,7 +12,7 @@ class FileData:
         self.char_count = 0
         self.file_name = file_name
 
-    def extract_from_file(self, file: str, is_empty_file_list: bool = False) -> None:
+    def _extract_from_file(self, file: str, is_empty_file_list: bool = False) -> None:
         if file != "-":
             with open(file, "rb") as f:
                 for line in f:
@@ -56,7 +56,7 @@ class WCHandler:
                 continue
 
             data = FileData()
-            data.extract_from_file(file)
+            data._extract_from_file(file)
             if self._opts_exist() is False:
                 self._update_total_data_no_opts(data, total_data)
                 message = self._build_default_message(data)
@@ -74,7 +74,7 @@ class WCHandler:
             raise ValueError(f"wc: {file}: No such file or directory")
 
         data = FileData()
-        data.extract_from_file(file, is_empty_file_list)
+        data._extract_from_file(file, is_empty_file_list)
         if self._opts_exist() is False:
             message = self._build_default_message(data)
         else:

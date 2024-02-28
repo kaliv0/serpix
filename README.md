@@ -7,3 +7,4 @@ supports:
 - head 
 - tail
 - cat
+- cut

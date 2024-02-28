@@ -32,7 +32,7 @@ class CatHandler:
 
         # helper variables used with options
         self.line_number = 1
-        self.previous_line = None
+        self.previous_line = ""
 
     def _opts_exist(self) -> bool:
         return (
