@@ -4,6 +4,7 @@ from app.cli.commands import cut
 
 TSV_FILE = "tests/resources/books1.tsv"
 CSV_FILE = "tests/resources/books2.csv"
+ALT_CSV_FILE = "tests/resources/books3.csv"
 NON_EXISTENT_FILE = "test/resources/bazz.yaml"
 
 
@@ -159,12 +160,89 @@ oryx' # 'Writing Word Macros' # '1999
 
 def test_cut_file_list() -> None:
     runner = CliRunner()
-    # no options
-    assert runner.invoke(cut, [TSV_FILE, CSV_FILE]).output == """"""
 
     # single option
-    assert runner.invoke(cut, ["-", TSV_FILE, CSV_FILE]).output == """"""
+    assert (
+        runner.invoke(cut, ["-b1-3", TSV_FILE, CSV_FILE]).output
+        == """pyt
+sna
+alp
+rob
+hor
+don
+ory
+pyt
+sna
+alp
+rob
+hor
+don
+ory
+Lor
+"""
+    )
+    assert (
+        runner.invoke(cut, ["-c2-8", TSV_FILE, CSV_FILE]).output
+        == """ython\tP
+nail\tSS
+lpaca\tI
+obin\tMy
+orse\tLi
+onkey\tC
+ryx\tWri
+ython,P
+nail,SS
+lpaca,I
+obin,My
+orse,Li
+onkey,C
+ryx,Wri
+orem Ip
+"""
+    )
 
     # combined options
-
-    # non-existent file
+    assert (
+        runner.invoke(cut, ["-f1", "-d,", CSV_FILE, ALT_CSV_FILE]).output
+        == """python
+snail
+alpaca
+robin
+horse
+donkey
+oryx
+Lorem Ipsum et cetera res vana
+English
+French
+Greek
+That book you never really read...
+Latin
+"""
+    )
+    assert (
+        runner.invoke(cut, ["-f1", "-d,", "-s", CSV_FILE, ALT_CSV_FILE]).output
+        == """python
+snail
+alpaca
+robin
+horse
+donkey
+oryx
+English
+French
+Greek
+Latin
+"""
+    )
+    assert (
+        runner.invoke(cut, ["-f2-3", NON_EXISTENT_FILE, TSV_FILE]).output
+        == """cut: test/resources/bazz.yaml: No such file or directory
+Programming Python\t2010
+SSH, The Secure Shell\t2005
+Intermediate Perl\t2012
+MySQL High Availability\t2014
+Linux in a Nutshell\t2009
+Cisco IOS in a Nutshell\t2005
+Writing Word Macros\t1999
+"""
+    )

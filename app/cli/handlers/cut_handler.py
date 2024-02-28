@@ -59,7 +59,7 @@ class CutHandler:
                 start = int(arg_list[0]) - 1 if arg_list[0] else 0
                 stop = int(arg_list[1]) if arg_list[1] else 10_000  # quasi Integer.MAX_VALUE
         except (ValueError, Exception):
-            # raise error if start or stop are not valid integers
+            # raise error if 'start' or 'stop' are not valid integers
             raise ValueError(f"cut: invalid option value '{arg}'")
         return slice(start, stop)
 
@@ -109,7 +109,7 @@ class CutHandler:
                 click.echo(curr_line)
             return
         # cut selected part of text
-        # NB: counts starts from zeroth index -> for this reason explicitly use 'is not None'
+        # NB: counts starts from zeroth index -> explicitly use 'is not None'
         if self.field_count is not None:
             curr_line = self.output_delimiter.join(
                 curr_line.split(self.delimiter)[self.field_count]
