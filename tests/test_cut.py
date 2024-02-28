@@ -6,20 +6,6 @@ TSV_FILE = "tests/resources/books1.tsv"
 CSV_FILE = "tests/resources/books2.csv"
 NON_EXISTENT_FILE = "test/resources/bazz.yaml"
 
-"""
-single option:
-+b
--c
--f
---ranges -> 1, 1-, -3, 1-3, 1-1, -
-
-combined:
--f -d
--f -s
-
-errors for -b and -c with -s and -d
-"""
-
 
 def test_cut_single_file() -> None:
     runner = CliRunner()
@@ -97,7 +83,7 @@ yx\tWri
 """
     )
 
-    ##fields
+    ## fields
     assert (
         runner.invoke(cut, ["-f1", TSV_FILE]).output
         == """python\nsnail\nalpaca\nrobin\nhorse\ndonkey\noryx\n"""
@@ -130,9 +116,45 @@ oryx\tWriting Word Macros\t1999
 SSH, The Secure Shell\t2005\tBarrett, Daniel
 Intermediate Perl\t2012\tSchwartz, Randal
 MySQL High Availability\t2014\tBell, Charles
+Linux in a Nutshell\t2009\tSiever, Ellen
+Cisco IOS in a Nutshell\t2005\tBoney, James
+Writing Word Macros\t1999\tRoman, Steven
 """
     )
+
     # combined options
+    assert (
+        runner.invoke(cut, ["-f-3", "-d,", CSV_FILE]).output
+        == """python,Programming Python,2010
+snail,SSH The Secure Shell,2005\nalpaca,Intermediate Perl,2012
+robin,MySQL High Availability,2014
+horse,Linux in a Nutshell,2009
+donkey,Cisco IOS in a Nutshell,2005
+oryx,Writing Word Macros,1999
+Lorem Ipsum et cetera res vana
+"""
+    )
+    assert (
+        runner.invoke(cut, ["-f-3", "-d,", "-s", CSV_FILE]).output
+        == """python,Programming Python,2010
+snail,SSH The Secure Shell,2005\nalpaca,Intermediate Perl,2012
+robin,MySQL High Availability,2014
+horse,Linux in a Nutshell,2009
+donkey,Cisco IOS in a Nutshell,2005
+oryx,Writing Word Macros,1999
+"""
+    )
+    assert (
+        runner.invoke(cut, ["-f-3", "-d,", "-s", "--output-delimiter=' # '", CSV_FILE]).output
+        == """python' # 'Programming Python' # '2010
+snail' # 'SSH The Secure Shell' # '2005
+alpaca' # 'Intermediate Perl' # '2012
+robin' # 'MySQL High Availability' # '2014
+horse' # 'Linux in a Nutshell' # '2009
+donkey' # 'Cisco IOS in a Nutshell' # '2005
+oryx' # 'Writing Word Macros' # '1999
+"""
+    )
 
 
 def test_cut_file_list() -> None:
