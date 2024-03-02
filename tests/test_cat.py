@@ -191,6 +191,16 @@ These Capitalists Generally Act Harmoniously And In Concert, To Fleece The Peopl
 """
     )
 
+    # error messages
+    assert (
+        runner.invoke(cat, ["-n", "-b", QUOTE_FILE]).exception.args[0]
+        == "Contradicting flags passed: 'number' and 'number-nonblank'"
+    )
+    assert (
+        runner.invoke(cat, ["-n", NON_EXISTENT_FILE]).exception.args[0]
+        == f"cat: {NON_EXISTENT_FILE}: No such file or directory"
+    )
+
 
 def test_cat_file_list() -> None:
     runner = CliRunner()
