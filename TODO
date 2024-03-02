@@ -26,11 +26,10 @@ curl ??
 
 to refactor:
 - combine classes with similar methods (head, tail; cat, cut) into OOP hierarchies
-- unify functionlities for reading single file and list of files -> use only lists
 - extract expected output for tests -> 
 - test errors -> inside result.exception.args[0]
 - migrate to poetry and remove tox
 
-- reason to separate handl_single_file from handle_multiple 
+- reason to separate handle_single_file from handle_multiple 
     -> print header message before each file in the list (as in wc)
     -> although it's not included in the unix original
