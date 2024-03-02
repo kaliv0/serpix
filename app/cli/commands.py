@@ -358,7 +358,7 @@ def cut(
 
 ###### ???????? ######
 
-# ### diff -> click's pager ###
+# ### diff -> wrapper around built-in python's implementation?? ###
 
 # ### comm ###
 
