@@ -157,10 +157,44 @@ oryx' # 'Writing Word Macros' # '1999
 """
     )
 
+    # error messages
+    ## no options
+    assert (
+        runner.invoke(cut, [TSV_FILE]).exception.args[0]
+        == "cut: you must specify a list of bytes, characters, or fields"
+    )
+
     ## invalid options
+    assert (
+        runner.invoke(cut, ["-c1", "-b1,", TSV_FILE]).exception.args[0]
+        == "cut: only one type of list may be specified"
+    )
     assert (
         runner.invoke(cut, ["-c1", "-d,", TSV_FILE]).exception.args[0]
         == "cut: an input delimiter may be specified only when operating on fields"
+    )
+    assert (
+        runner.invoke(cut, ["-f1", "-d_#_", TSV_FILE]).exception.args[0]
+        == "cut: the delimiter must be a single character"
+    )
+    assert (
+        runner.invoke(cut, ["-c1", "-s", TSV_FILE]).exception.args[0]
+        == "cut: suppressing non-delimited lines makes sense only when operating on fields"
+    )
+
+    ## invalid ranges
+    assert (
+        runner.invoke(cut, ["-c1-x", TSV_FILE]).exception.args[0]
+        == "cut: invalid option value '1-x'"
+    )
+    assert (
+        runner.invoke(cut, ["-c-", TSV_FILE]).exception.args[0]
+        == "cut: invalid range with no endpoint: -"
+    )
+    assert runner.invoke(cut, ["-c-1-", TSV_FILE]).exception.args[0] == "cut: invalid range"
+    assert (
+        runner.invoke(cut, ["-f2", NON_EXISTENT_FILE]).exception.args[0]
+        == f"cut: {NON_EXISTENT_FILE}: No such file or directory"
     )
 
 
