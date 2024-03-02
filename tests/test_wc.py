@@ -36,6 +36,12 @@ def test_wc_single_file() -> None:
     assert runner.invoke(wc, ["-cwl", LOG_FILE]).output == runner.invoke(wc, [LOG_FILE]).output
     assert runner.invoke(wc, ["-cwl", POEM_FILE]).output == runner.invoke(wc, [POEM_FILE]).output
 
+    # non-existent file
+    assert (
+        runner.invoke(wc, NON_EXISTENT_FILE).exception.args[0]
+        == f"wc: {NON_EXISTENT_FILE}: No such file or directory"
+    )
+
 
 def test_wc_file_list() -> None:
     runner = CliRunner()

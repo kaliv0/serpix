@@ -59,6 +59,10 @@ To hearts which near each other move
     expected_c4 = "Hello world\nCiao ragazzi\nBon jour\nBratwu\n"
     assert runner.invoke(head, ["-c 40", LOG_FILE]).output == expected_c4
 
+    # error messages
+    expected_value_error = "Contradicting flags passed: 'quiet' and 'verbose'"
+    assert runner.invoke(head, ["-q", "-v", LOG_FILE]).exception.args[0] == expected_value_error
+
 
 def test_wc_file_list() -> None:
     runner = CliRunner()

@@ -59,6 +59,10 @@ They never SAY good-night.
     expected_c4 = "\nDe lana caprina rixatur\nAien aristeuein\n"
     assert runner.invoke(tail, ["-c 40", LOG_FILE]).output == expected_c4
 
+    # error messages
+    expected_value_error = "Contradicting flags passed: 'quiet' and 'verbose'"
+    assert runner.invoke(tail, ["-q", "-v", LOG_FILE]).exception.args[0] == expected_value_error
+
 
 def test_wc_file_list() -> None:
     runner = CliRunner()
@@ -152,4 +156,10 @@ From evening close to morning light,
 The night is good; because, my love,
 They never SAY good-night.
 """
+    )
+
+    # not supported
+    expected_value_error = "tail: following multiple files is not supported"
+    assert (
+        runner.invoke(tail, ["-f", LOG_FILE, POEM_FILE]).exception.args[0] == expected_value_error
     )
