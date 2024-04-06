@@ -26,6 +26,7 @@ curl ??
 
 to refactor:
 - combine classes with similar methods (head, tail; cat, cut) into OOP hierarchies
+    -> e.g. extract validate_file, build_message
 - extract expected output for tests -> 
 - test errors -> inside result.exception.args[0]
 - migrate to poetry and remove tox
@@ -33,3 +34,5 @@ to refactor:
 - reason to separate handle_single_file from handle_multiple 
     -> print header message before each file in the list (as in wc)
     -> although it's not included in the unix original
+
+- add verbose opt to uniq

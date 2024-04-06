@@ -1,6 +1,7 @@
 import click
 
 from app.cli.handlers import CatHandler, CutHandler, HeadHandler, TailHandler, WCHandler
+from app.cli.handlers.uniq_handler import UniqHandler
 
 # ### wc ###
 
@@ -328,10 +329,43 @@ def cut(
 
 
 # ### uniq ###
+
+
+@click.command()
+@click.argument("file_list", metavar="file", type=click.Path(), nargs=-1)
+@click.option(
+    "-c",
+    "--count",
+    "duplicates_count",
+    is_flag=True,
+    help="prefix lines by the number of occurrences",
+)
+@click.option(
+    "-d",
+    "--repeated",
+    "show_repeated",
+    is_flag=True,
+    help="only print duplicate lines, one for each group",
+)
+def uniq(file_list: tuple[str, ...], duplicates_count: bool, show_repeated: bool) -> None:
+    """
+    Filter adjacent matching lines from INPUT (or standard input),
+    writing to OUTPUT (or standard output).
+
+    With no options, matching lines are merged to the first occurrence.
+    """
+    uniq_handler = UniqHandler(duplicates_count, show_repeated)
+    if len(file_list) > 1:
+        # uniq_handler.handle_file_list(file_list)
+        ...
+    else:
+        uniq_handler.handle_single_file(file_list[0])
+
+
 """
--c, --count
 -i, --ignore-case,
 -d, --repeated,
+-D
 -f, --skip-fields,
 -s, --skip-chars,
 -u, --unique ???
