@@ -347,14 +347,20 @@ def cut(
     is_flag=True,
     help="only print duplicate lines, one for each group",
 )
-def uniq(file_list: tuple[str, ...], duplicates_count: bool, show_repeated: bool) -> None:
+@click.option(
+    "-v",
+    "--verbose",
+    is_flag=True,
+    help="always output headers giving file names",
+)
+def uniq(file_list: tuple[str, ...], duplicates_count: bool, show_repeated: bool, verbose:bool) -> None:
     """
     Filter adjacent matching lines from INPUT (or standard input),
     writing to OUTPUT (or standard output).
 
     With no options, matching lines are merged to the first occurrence.
     """
-    uniq_handler = UniqHandler(duplicates_count, show_repeated)
+    uniq_handler = UniqHandler(duplicates_count, show_repeated, verbose)
     if len(file_list) > 1:
         # uniq_handler.handle_file_list(file_list)
         ...
