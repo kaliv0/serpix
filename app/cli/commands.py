@@ -336,9 +336,16 @@ def cut(
 @click.option(
     "-c",
     "--count",
-    "duplicates_count",
+    "show_count",
     is_flag=True,
     help="prefix lines by the number of occurrences",
+)
+@click.option(
+    "-u",
+    "--unique",
+    "show_unique",
+    is_flag=True,
+    help="only print unique lines",
 )
 @click.option(
     "-d",
@@ -348,19 +355,46 @@ def cut(
     help="only print duplicate lines, one for each group",
 )
 @click.option(
+    "-D",
+    "--all-repeated",
+    "show_all_repeated",
+    is_flag=True,
+    help="print all duplicate lines",
+)
+@click.option(
+    "-i",
+    "--ignore-case",
+    "ignore_case",
+    is_flag=True,
+    help="ignore differences in case when comparing",
+)
+@click.option(
     "-v",
     "--verbose",
     is_flag=True,
     help="always output headers giving file names",
 )
-def uniq(file_list: tuple[str, ...], duplicates_count: bool, show_repeated: bool, verbose:bool) -> None:
+def uniq(
+    file_list: tuple[str, ...],
+    show_count: bool,
+    show_unique: bool,
+    show_repeated: bool,
+    show_all_repeated: bool,
+    ignore_case: bool,
+    verbose: bool,
+) -> None:
     """
     Filter adjacent matching lines from INPUT (or standard input),
     writing to OUTPUT (or standard output).
 
     With no options, matching lines are merged to the first occurrence.
+
+    Note: 'uniq' does not detect repeated lines unless they are adjacent.
+    You may want to sort the input first, or use 'sort -u' without 'uniq'.
     """
-    uniq_handler = UniqHandler(duplicates_count, show_repeated, verbose)
+    uniq_handler = UniqHandler(
+        show_count, show_unique, show_repeated, show_all_repeated, ignore_case, verbose
+    )
     if len(file_list) > 1:
         # uniq_handler.handle_file_list(file_list)
         ...
@@ -369,12 +403,9 @@ def uniq(file_list: tuple[str, ...], duplicates_count: bool, show_repeated: bool
 
 
 """
--i, --ignore-case,
--d, --repeated,
--D
 -f, --skip-fields,
 -s, --skip-chars,
--u, --unique ???
+-w, --check-chars=N compare no more than N characters in lines
 """
 
 # ### sort ###

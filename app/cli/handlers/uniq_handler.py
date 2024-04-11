@@ -1,4 +1,5 @@
 import os
+from io import TextIOWrapper
 
 import click
 
@@ -6,27 +7,27 @@ import click
 class UniqHandler:
     def __init__(
         self,
-        # multiple_files: bool,
-        duplicates_count: bool,  # FIXME-> rename to show_dupl_count?
+        show_count: bool,
+        show_unique: bool,
         show_repeated: bool,
+        show_all_repeated: bool,
+        ignore_case: bool,
         verbose: bool,
     ) -> None:
-        # TODO: -ud returns nothing but could raise as well, -uc also (??)
-        # if duplicates_count and all_duplicates
-        # raise ValueError("uniq: printing all duplicated lines and repeat counts is meaningless")
-
+        self._validate_opts(show_count, show_unique, show_repeated, show_all_repeated)
         # setting uniq options
-        self.duplicates_count = duplicates_count
+        self.show_count = show_count
+        self.show_unique = show_unique
         self.show_repeated = show_repeated
+        self.show_all_repeated = show_all_repeated
+        self.ignore_case = ignore_case
         self.verbose = verbose
 
     # ### files ###
 
     def handle_single_file(self, file: str) -> None:
         self._validate_file(file, raise_error=True)
-        self._build_message(file)
-        # message = self._build_message(file)
-        # click.echo(message)
+        self._process_file(file)
 
     # ### validate path ###
 
@@ -50,52 +51,62 @@ class UniqHandler:
 
     # ### result messages ###
 
-    def _build_message(self, file: str) -> None:  # FIXME: rename -> display_content
+    def _process_file(self, file: str) -> None:
         if self.verbose:
-            click.echo(f"==> {file} <==")
+            click.echo(f"==> {file} <==")  # add \n?
 
-        counter = 1
         with open(file, "r") as f:
-            curr_line = f.readline()
-            while next_line := f.readline():
-                if curr_line == next_line:
-                    counter += 1
-                else:
-                    click.echo(f"{counter :>7} {curr_line}", nl=False)
-                    counter = 1
-                    curr_line = next_line
-            click.echo(f"{counter :>7} {curr_line}", nl=False)
+            return self._display_lines(f)
 
-        # with open(file, "r") as f:
-        #     lines = f.readlines()
-        # # NB: originally uniq detects only adjacent duplicate files ->
-        # # to achieve same behavior probably custom DSA instead of collections.Counter should be used?
-        # cnt = collections.Counter(lines)  # FIXME rename
+    def _display_lines(self, file: TextIOWrapper) -> None:  # TODO: works only for -u and -d
+        counter = 1
+        curr_line = file.readline()
+        while next_line := file.readline():
+            # count duplicates until different line is reached
+            if self.compare_lines(curr_line, next_line):
+                counter += 1
+                curr_line = next_line
+                continue
+            # previous line is different compared to next_one
+            # but 'uniq' only if not last in series of duplicates
+            message = f"{curr_line}"  # TODO: extract handle message -> nest adding count inside if_should_print
+            if self.show_count:
+                message = f"{counter :>7} " + message
+            if self.should_print_message(counter):
+                click.echo(message, nl=False)
+            counter = 1
+            curr_line = next_line
+        # handle last line in file
+        message = f"{curr_line}"
+        if self.show_count:
+            message = f"{counter :>7} " + message
+        if self.should_print_message(counter):
+            click.echo(message, nl=False)
 
-        # if self._opts_exist():
-        #     # TODO: combine options
-        #     file_content = self._build_message_from_options(cnt)
-        # else:
-        #     file_content = "".join(cnt)
+    def compare_lines(self, current: str, next: str) -> bool:
+        if self.ignore_case:
+            return current.upper() == next.upper()
+        return current == next
 
-        # if self.verbose:
-        #     return f"==> {file} <==\n" + file_content.rstrip("\n")
-        # # remove final new line to mimic original message
-        # return file_content.rstrip("\n")
+    def should_print_message(self, counter: int) -> bool:
+        if self.show_unique:
+            return counter == 1
+        if self.show_repeated:
+            return counter > 1
+        return False
 
-    # def _build_message_from_options(self, cnt: Counter) -> str:
-    #     """
-    #     -c, -u, -d, -D, -i
-    #     -cu?, -cd, -ci, -cdi
-    #     -ui, -di
-    #     """
+    # ### validate options ###
 
-    #     if self.duplicates_count:
-    #         return "".join([f"{v :>7} {k}" for k, v in cnt.items()])  # FIXME => :>8 as in wc?
-    #     if self.show_repeated:
-    #         return "".join([k for k, v in cnt.items() if v > 1])
-    #     else:
-    #         return ""  # TODO
+    def _validate_opts(self, show_count, show_unique, show_repeated, show_all_repeated) -> None:
+        if show_count:
+            if show_all_repeated:
+                raise ValueError(
+                    "uniq: printing all duplicated lines and repeat counts is meaningless"
+                )
+            elif show_unique:
+                raise ValueError("uniq: printing all uniq lines and repeat counts is meaningless")
+        if show_unique and (show_repeated or show_all_repeated):
+            raise ValueError("uniq: meaningless flag combination")
 
     def _opts_exist(self) -> bool:
-        return self.duplicates_count or self.show_repeated
+        return self.show_count or self.show_repeated
