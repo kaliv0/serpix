@@ -374,6 +374,13 @@ def cut(
     is_flag=True,
     help="always output headers giving file names",
 )
+@click.option(
+    "-w",
+    "--check-chars",
+    type=click.IntRange(0),
+    default=0,
+    help="ignore differences in case when comparing",
+)
 def uniq(
     file_list: tuple[str, ...],
     show_count: bool,
@@ -382,6 +389,7 @@ def uniq(
     show_all_repeated: bool,
     ignore_case: bool,
     verbose: bool,
+    check_chars: int,
 ) -> None:
     """
     Filter adjacent matching lines from INPUT (or standard input),
@@ -393,7 +401,7 @@ def uniq(
     You may want to sort the input first, or use 'sort -u' without 'uniq'.
     """
     uniq_handler = UniqHandler(
-        show_count, show_unique, show_repeated, show_all_repeated, ignore_case, verbose
+        show_count, show_unique, show_repeated, show_all_repeated, ignore_case, verbose, check_chars
     )
     if len(file_list) > 1:
         # uniq_handler.handle_file_list(file_list)

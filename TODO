@@ -34,12 +34,12 @@ to refactor:
 - reason to separate handle_single_file from handle_multiple 
     -> print header message before each file in the list (as in wc)
     -> although it's not included in the unix original
+    -> possibly combine to single function -> read list with one element for single file?
 
 - main reason to support reading from stdin -> possibility to use pipe with other subcommands
-    -> not support in this case -> remove reading from sdtin???
+    -> not supported in this case -> remove reading from sdtin???
 
 - uniq:
-    - don't implement reading from stdin
-    - substitute counter with custom DSA -> possibility to add skipping options, -w etc
-    - raise error for -ci (not in original)
-    - combine -D and --all-repeated -> different in original
+    - implement comparison by first few letters?
+
+- check and unify byte_count in head (intRange(0)) and cut (string)?
