@@ -1,0 +1,10 @@
+python,Programming Python,2010,Mark Lutz
+python,Programming Python,2010,Mark Lutz
+snail,SSH The Secure Shell,2005,Daniel Barrett
+Veni Vidi Vici
+alpaca,Intermediate Perl,2012,Randal Schwartz
+alpaca,Intermediate Perl,2012,Randal Schwartz
+alpaca,Intermediate Perl,2012,Randal Schwartz
+robin,MySQL High Availability,2014,Charles Bell
+horse,Linux in a Nutshell,2009,Ellen Siever
+donkey,Cisco IOS in a Nutshell,2005,James Boney

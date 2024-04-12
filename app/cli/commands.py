@@ -1,6 +1,7 @@
 import click
 
 from app.cli.handlers import CatHandler, CutHandler, HeadHandler, TailHandler, WCHandler
+from app.cli.handlers.uniq_handler import UniqHandler
 
 # ### wc ###
 
@@ -328,14 +329,89 @@ def cut(
 
 
 # ### uniq ###
-"""
--c, --count
--i, --ignore-case,
--d, --repeated,
--f, --skip-fields,
--s, --skip-chars,
--u, --unique ???
-"""
+
+
+@click.command()
+@click.argument("file_list", metavar="file", type=click.Path(), nargs=-1)
+@click.option(
+    "-c",
+    "--count",
+    "show_count",
+    is_flag=True,
+    help="prefix lines by the number of occurrences",
+)
+@click.option(
+    "-u",
+    "--unique",
+    "show_unique",
+    is_flag=True,
+    help="only print unique lines",
+)
+@click.option(
+    "-d",
+    "--repeated",
+    "show_repeated",
+    is_flag=True,
+    help="only print duplicate lines, one for each group",
+)
+@click.option(
+    "-D",
+    "--all-repeated",
+    "show_all_repeated",
+    is_flag=True,
+    help="print all duplicate lines",
+)
+@click.option(
+    "-i",
+    "--ignore-case",
+    "ignore_case",
+    is_flag=True,
+    help="ignore differences in case when comparing",
+)
+@click.option(
+    "-w",
+    "--check-chars",
+    type=click.IntRange(0),
+    default=0,
+    help="ignore differences in case when comparing",
+)
+@click.option(
+    "-s",
+    "--skip-chars",
+    type=click.IntRange(0),
+    default=0,
+    help="avoid comparing the first N characters",
+)
+def uniq(
+    file_list: tuple[str, ...],
+    show_count: bool,
+    show_unique: bool,
+    show_repeated: bool,
+    show_all_repeated: bool,
+    ignore_case: bool,
+    check_chars: int,
+    skip_chars: int,
+) -> None:
+    """
+    Filter adjacent matching lines from INPUT (or standard input),
+    writing to OUTPUT (or standard output).
+
+    With no options, matching lines are merged to the first occurrence.
+
+    Note: 'uniq' does not detect repeated lines unless they are adjacent.
+    You may want to sort the input first, or use 'sort -u' without 'uniq'.
+    """
+    uniq_handler = UniqHandler(
+        show_count,
+        show_unique,
+        show_repeated,
+        show_all_repeated,
+        ignore_case,
+        check_chars,
+        skip_chars,
+    )
+    uniq_handler.handle_file(file_list)
+
 
 # ### sort ###
 """

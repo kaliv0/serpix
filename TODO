@@ -2,7 +2,6 @@ grep
 sed 
 tr 
 sort 
-uniq 
 find
 -----------------------------
 comm?
@@ -26,10 +25,19 @@ curl ??
 
 to refactor:
 - combine classes with similar methods (head, tail; cat, cut) into OOP hierarchies
-- extract expected output for tests -> 
+    -> e.g. extract validate_file, build_message
+- extract expected output for tests
+- refactor/split tests into separate cases
 - test errors -> inside result.exception.args[0]
 - migrate to poetry and remove tox
 
 - reason to separate handle_single_file from handle_multiple 
     -> print header message before each file in the list (as in wc)
     -> although it's not included in the unix original
+    -> possibly combine to single function -> read list with one element for single file?
+
+- main reason to support reading from stdin -> possibility to use pipe with other subcommands
+    -> not supported in this case -> remove reading from sdtin???
+    - currently supported in: cat, cut, wc
+
+- check and unify byte_count in head (intRange(0)) and cut (string)?
