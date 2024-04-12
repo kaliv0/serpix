@@ -1,0 +1,7 @@
+foo
+foobar
+fizz
+fizzbuzz
+fizbiz
+bam
+BaM

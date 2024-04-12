@@ -369,17 +369,18 @@ def cut(
     help="ignore differences in case when comparing",
 )
 @click.option(
-    "-v",
-    "--verbose",
-    is_flag=True,
-    help="always output headers giving file names",
-)
-@click.option(
     "-w",
     "--check-chars",
     type=click.IntRange(0),
     default=0,
     help="ignore differences in case when comparing",
+)
+@click.option(
+    "-s",
+    "--skip-chars",
+    type=click.IntRange(0),
+    default=0,
+    help="avoid comparing the first N characters",
 )
 def uniq(
     file_list: tuple[str, ...],
@@ -388,8 +389,8 @@ def uniq(
     show_repeated: bool,
     show_all_repeated: bool,
     ignore_case: bool,
-    verbose: bool,
     check_chars: int,
+    skip_chars: int,
 ) -> None:
     """
     Filter adjacent matching lines from INPUT (or standard input),
@@ -401,20 +402,16 @@ def uniq(
     You may want to sort the input first, or use 'sort -u' without 'uniq'.
     """
     uniq_handler = UniqHandler(
-        show_count, show_unique, show_repeated, show_all_repeated, ignore_case, verbose, check_chars
+        show_count,
+        show_unique,
+        show_repeated,
+        show_all_repeated,
+        ignore_case,
+        check_chars,
+        skip_chars,
     )
-    if len(file_list) > 1:
-        # uniq_handler.handle_file_list(file_list)
-        ...
-    else:
-        uniq_handler.handle_single_file(file_list[0])
+    uniq_handler.handle_file(file_list)
 
-
-"""
--f, --skip-fields,
--s, --skip-chars,
--w, --check-chars=N compare no more than N characters in lines
-"""
 
 # ### sort ###
 """
