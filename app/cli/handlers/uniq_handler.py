@@ -1,4 +1,6 @@
 import os
+from sys import stdout
+from typing import TextIO, Tuple
 
 import click
 
@@ -29,47 +31,68 @@ class UniqHandler:
     # ### files ###
 
     def handle_file(self, file_list: tuple[str, ...]) -> None:
-        file = self._get_file_name(file_list)
+        file, output_path = self._get_file_names(file_list)
         self._validate_file(file)
-        self._process_file(file)
+        if self._validate_output_path(output_path):
+            output = self._get_output_file(output_path)
+            return self._process_file(file, output)
+        return self._process_file(file)
 
-    def _get_file_name(self, file_list: tuple[str, ...]) -> str:
-        if not file_list:
+    def _get_file_names(self, file_list: tuple[str, ...]) -> Tuple[str, str | None]:
+        if not file_list or file_list[0] == "-":
             raise ValueError("uniq: reading INPUT from stdin is not supported")
-        if len(file_list) > 1:
-            raise ValueError("uniq: saving logs to OUTPUT destination is not supported")
-        file = file_list[0]
-        return file
+        if len(file_list) > 2:
+            raise ValueError(f"uniq: extra operand ‘{file_list[2]}’")
+        if len(file_list) == 2:
+            return file_list[0], file_list[1]
+        return file_list[0], None
+
+    @staticmethod
+    def _get_output_file(path: str) -> TextIO:
+        output = open(path, "a+")
+        # empty output content if exists
+        output.truncate(0)
+        return output
 
     # ### validate path ###
 
-    def _validate_file(self, file: str) -> bool:
+    def _validate_file(self, file: str) -> None:
         if os.path.exists(file) is False:
             raise ValueError(f"uniq: {file}: No such file or directory")
         if os.path.isdir(file):
             raise ValueError(f"uniq: error reading '{file}'")
+
+    def _validate_output_path(self, path: str | None) -> bool:
+        if path is None or path == "-":
+            return False
+        if os.path.isdir(path):
+            raise ValueError(f"uniq: {path}: Is a directory")
         return True
 
     # ### result messages ###
 
-    def _process_file(self, file: str) -> None:
-        with open(file, "r") as f:
+    def _process_file(self, path: str, output: TextIO = None) -> None:
+        file = open(path, "r")
+        counter = 1
+        curr_line = file.readline()
+        while next_line := file.readline():
+            # count duplicates until different line is reached
+            if self._compare_lines(curr_line, next_line):
+                counter += 1
+                if self.show_all_repeated:
+                    click.echo(curr_line, nl=False)
+                    curr_line = next_line
+                continue
+            # previous line is different compared to next_one
+            # but 'uniq' only if not last in series of duplicates
+            self._handle_message(counter, curr_line, output)
             counter = 1
-            curr_line = f.readline()
-            while next_line := f.readline():
-                # count duplicates until different line is reached
-                if self._compare_lines(curr_line, next_line):
-                    counter += 1
-                    if self.show_all_repeated:
-                        click.echo(curr_line, nl=False)
-                    continue
-                # previous line is different compared to next_one
-                # but 'uniq' only if not last in series of duplicates
-                self._handle_message(counter, curr_line)
-                counter = 1
-                curr_line = next_line
-            # handle last line in file
-            self._handle_message(counter, curr_line)
+            curr_line = next_line
+        # handle last line in file
+        self._handle_message(counter, curr_line, output)
+        file.close()
+        if output:
+            output.close()
 
     def _compare_lines(self, current: str, next: str) -> bool:
         if self.check_chars:
@@ -82,12 +105,12 @@ class UniqHandler:
             return current.upper() == next.upper()
         return current == next
 
-    def _handle_message(self, counter: int, curr_line: str) -> None:
+    def _handle_message(self, counter: int, curr_line: str, output: TextIO = stdout) -> None:
         message = f"{curr_line}"
         if self.show_count:
             message = f"{counter :>7} " + message
         if self._should_print_message(counter):
-            click.echo(message, nl=False)
+            click.echo(message, nl=False, file=output)
 
     def _should_print_message(self, counter: int) -> bool:
         if self.show_unique:
