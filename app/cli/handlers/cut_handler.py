@@ -44,7 +44,7 @@ class CutHandler:
                 )
         if show_only_delimited_lines and (char_count or byte_count):
             raise ValueError(
-                "cut: suppressing non-delimited lines makes sense only when operating on fields"
+                "cut: suppressing non-delimited lines makes sense\n\tonly when operating on fields"
             )
 
     def _read_range(self, arg: str) -> slice:

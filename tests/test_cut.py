@@ -1,188 +1,71 @@
+import subprocess
+
+import pytest
 from click.testing import CliRunner
 
 from app.cli.commands import cut
 
-TSV_FILE = "tests/resources/books1.tsv"
-CSV_FILE = "tests/resources/books2.csv"
-ALT_CSV_FILE = "tests/resources/books3.csv"
-NON_EXISTENT_FILE = "test/resources/bazz.yaml"
+TSV_FILE = "tests/resources/cut/books1.tsv"
+CSV_FILE = "tests/resources/cut/books2.csv"
+ALT_CSV_FILE = "tests/resources/cut/books3.csv"
+NON_EXISTENT_FILE = "test/resources/cut/bazz.yaml"
+
+runner = CliRunner()
 
 
-def test_cut_single_file() -> None:
-    runner = CliRunner()
-
-    # single option
-    ## bytes
-    assert runner.invoke(cut, ["-b1", TSV_FILE]).output == "p\ns\na\nr\nh\nd\no\n"
+@pytest.mark.parametrize("cut_option", ["-b1", "-b4-", "-b-3", "-b1-5"])
+def test_cut_bytes(cut_option) -> None:
     assert (
-        runner.invoke(cut, ["-b4-", TSV_FILE]).output
-        == """hon\tProgramming Python\t2010\tLutz, Mark
-il\tSSH, The Secure Shell\t2005\tBarrett, Daniel
-aca\tIntermediate Perl\t2012\tSchwartz, Randal
-in\tMySQL High Availability\t2014\tBell, Charles
-se\tLinux in a Nutshell\t2009\tSiever, Ellen
-key\tCisco IOS in a Nutshell\t2005\tBoney, James
-x\tWriting Word Macros\t1999\tRoman, Steven
-"""
-    )
-    assert (
-        runner.invoke(cut, ["-b-3", TSV_FILE]).output
-        == """pyt
-sna
-alp
-rob
-hor
-don
-ory
-"""
-    )
-    assert (
-        runner.invoke(cut, ["-b1-5", TSV_FILE]).output
-        == """pytho
-snail
-alpac
-robin
-horse
-donke
-oryx
-"""
+        runner.invoke(cut, [cut_option, TSV_FILE]).output
+        == subprocess.run(["cut", cut_option, TSV_FILE], capture_output=True, text=True).stdout
     )
 
-    ## characters
-    assert runner.invoke(cut, ["-c1", TSV_FILE]).output == "p\ns\na\nr\nh\nd\no\n"
+
+@pytest.mark.parametrize("cut_option", ["-c1", "-c4-", "-c-3", "-c3-8"])
+def test_cut_characters(cut_option) -> None:
     assert (
-        runner.invoke(cut, ["-c4-", TSV_FILE]).output
-        == """hon\tProgramming Python\t2010\tLutz, Mark
-il\tSSH, The Secure Shell\t2005\tBarrett, Daniel
-aca\tIntermediate Perl\t2012\tSchwartz, Randal
-in\tMySQL High Availability\t2014\tBell, Charles
-se\tLinux in a Nutshell\t2009\tSiever, Ellen
-key\tCisco IOS in a Nutshell\t2005\tBoney, James
-x\tWriting Word Macros\t1999\tRoman, Steven
-"""
-    )
-    assert (
-        runner.invoke(cut, ["-c-3", TSV_FILE]).output
-        == """pyt
-sna
-alp
-rob
-hor
-don
-ory
-"""
-    )
-    assert (
-        runner.invoke(cut, ["-c3-8", TSV_FILE]).output
-        == """thon\tP
-ail\tSS
-paca\tI
-bin\tMy
-rse\tLi
-nkey\tC
-yx\tWri
-"""
+        runner.invoke(cut, [cut_option, TSV_FILE]).output
+        == subprocess.run(["cut", cut_option, TSV_FILE], capture_output=True, text=True).stdout
     )
 
-    ## fields
+
+@pytest.mark.parametrize("cut_option", ["-f1", "-f2-", "-f-3", "-f2-4"])
+def test_cut_fields(cut_option) -> None:
     assert (
-        runner.invoke(cut, ["-f1", TSV_FILE]).output
-        == """python\nsnail\nalpaca\nrobin\nhorse\ndonkey\noryx\n"""
-    )
-    assert (
-        runner.invoke(cut, ["-f2-", TSV_FILE]).output
-        == """Programming Python\t2010\tLutz, Mark
-SSH, The Secure Shell\t2005\tBarrett, Daniel
-Intermediate Perl\t2012\tSchwartz, Randal
-MySQL High Availability\t2014\tBell, Charles
-Linux in a Nutshell\t2009\tSiever, Ellen
-Cisco IOS in a Nutshell\t2005\tBoney, James
-Writing Word Macros\t1999\tRoman, Steven
-"""
-    )
-    assert (
-        runner.invoke(cut, ["-f-3", TSV_FILE]).output
-        == """python\tProgramming Python\t2010
-snail\tSSH, The Secure Shell\t2005
-alpaca\tIntermediate Perl\t2012
-robin\tMySQL High Availability\t2014
-horse\tLinux in a Nutshell\t2009
-donkey\tCisco IOS in a Nutshell\t2005
-oryx\tWriting Word Macros\t1999
-"""
-    )
-    assert (
-        runner.invoke(cut, ["-f2-4", TSV_FILE]).output
-        == """Programming Python\t2010\tLutz, Mark
-SSH, The Secure Shell\t2005\tBarrett, Daniel
-Intermediate Perl\t2012\tSchwartz, Randal
-MySQL High Availability\t2014\tBell, Charles
-Linux in a Nutshell\t2009\tSiever, Ellen
-Cisco IOS in a Nutshell\t2005\tBoney, James
-Writing Word Macros\t1999\tRoman, Steven
-"""
+        runner.invoke(cut, [cut_option, TSV_FILE]).output
+        == subprocess.run(["cut", cut_option, TSV_FILE], capture_output=True, text=True).stdout
     )
 
-    # combined options
+
+@pytest.mark.parametrize(
+    "cut_options",
+    [("-f-3", "-d,"), ("-f-3", "-d,", "-s"), ("-f-3", "-d,", "-s", "--output-delimiter=' # '")],
+)
+def test_cut_fields_combined_options(cut_options) -> None:
     assert (
-        runner.invoke(cut, ["-f-3", "-d,", CSV_FILE]).output
-        == """python,Programming Python,2010
-snail,SSH The Secure Shell,2005\nalpaca,Intermediate Perl,2012
-robin,MySQL High Availability,2014
-horse,Linux in a Nutshell,2009
-donkey,Cisco IOS in a Nutshell,2005
-oryx,Writing Word Macros,1999
-Lorem Ipsum et cetera res vana
-"""
-    )
-    assert (
-        runner.invoke(cut, ["-f-3", "-d,", "-s", CSV_FILE]).output
-        == """python,Programming Python,2010
-snail,SSH The Secure Shell,2005\nalpaca,Intermediate Perl,2012
-robin,MySQL High Availability,2014
-horse,Linux in a Nutshell,2009
-donkey,Cisco IOS in a Nutshell,2005
-oryx,Writing Word Macros,1999
-"""
-    )
-    assert (
-        runner.invoke(cut, ["-f-3", "-d,", "-s", "--output-delimiter=' # '", CSV_FILE]).output
-        == """python' # 'Programming Python' # '2010
-snail' # 'SSH The Secure Shell' # '2005
-alpaca' # 'Intermediate Perl' # '2012
-robin' # 'MySQL High Availability' # '2014
-horse' # 'Linux in a Nutshell' # '2009
-donkey' # 'Cisco IOS in a Nutshell' # '2005
-oryx' # 'Writing Word Macros' # '1999
-"""
+        runner.invoke(cut, [*cut_options, CSV_FILE]).output
+        == subprocess.run(["cut", *cut_options, CSV_FILE], capture_output=True, text=True).stdout
     )
 
-    # error messages
-    ## no options
-    assert (
-        runner.invoke(cut, [TSV_FILE]).exception.args[0]
-        == "cut: you must specify a list of bytes, characters, or fields"
-    )
 
-    ## invalid options
-    assert (
-        runner.invoke(cut, ["-c1", "-b1,", TSV_FILE]).exception.args[0]
-        == "cut: only one type of list may be specified"
-    )
-    assert (
-        runner.invoke(cut, ["-c1", "-d,", TSV_FILE]).exception.args[0]
-        == "cut: an input delimiter may be specified only when operating on fields"
-    )
-    assert (
-        runner.invoke(cut, ["-f1", "-d_#_", TSV_FILE]).exception.args[0]
-        == "cut: the delimiter must be a single character"
-    )
-    assert (
-        runner.invoke(cut, ["-c1", "-s", TSV_FILE]).exception.args[0]
-        == "cut: suppressing non-delimited lines makes sense only when operating on fields"
-    )
+def test_cut_no_options_error() -> None:
+    assert runner.invoke(cut, [TSV_FILE]).exception.args[0] == subprocess.run(
+        ["cut", TSV_FILE], capture_output=True, text=True
+    ).stderr.replace("\nTry 'cut --help' for more information.\n", "")
 
-    ## invalid ranges
+
+@pytest.mark.parametrize(
+    "invalid_options", [("-c1", "-b1"), ("-c1", "-d"), ("-f1", "-d_#_"), ("-c1", "-s")]
+)
+def test_cut_invalid_options_error(invalid_options) -> None:
+    # NB: error messages lack final redirection to '--help' option
+    assert runner.invoke(cut, [*invalid_options, TSV_FILE]).exception.args[0] == subprocess.run(
+        ["cut", *invalid_options, TSV_FILE], capture_output=True, text=True
+    ).stderr.replace("\nTry 'cut --help' for more information.\n", "")
+
+
+def test_cut_invalid_ranges_error() -> None:
+    # NB: error messages differ from original
     assert (
         runner.invoke(cut, ["-c1-x", TSV_FILE]).exception.args[0]
         == "cut: invalid option value '1-x'"
@@ -192,97 +75,41 @@ oryx' # 'Writing Word Macros' # '1999
         == "cut: invalid range with no endpoint: -"
     )
     assert runner.invoke(cut, ["-c-1-", TSV_FILE]).exception.args[0] == "cut: invalid range"
+
+
+@pytest.mark.parametrize("cut_option", ["-b1-3", "-c2-8"])
+def test_cut_file_list(cut_option) -> None:
     assert (
-        runner.invoke(cut, ["-f2", NON_EXISTENT_FILE]).exception.args[0]
-        == f"cut: {NON_EXISTENT_FILE}: No such file or directory"
+        runner.invoke(cut, [cut_option, TSV_FILE, CSV_FILE]).output
+        == subprocess.run(
+            ["cut", cut_option, TSV_FILE, CSV_FILE], capture_output=True, text=True
+        ).stdout
     )
 
 
-def test_cut_file_list() -> None:
-    runner = CliRunner()
-
-    # single option
+@pytest.mark.parametrize("cut_options", [("-f1", "-d,"), ("-f1", "-d,", "-s")])
+def test_cut_file_list_combined_options(cut_options) -> None:
     assert (
-        runner.invoke(cut, ["-b1-3", TSV_FILE, CSV_FILE]).output
-        == """pyt
-sna
-alp
-rob
-hor
-don
-ory
-pyt
-sna
-alp
-rob
-hor
-don
-ory
-Lor
-"""
-    )
-    assert (
-        runner.invoke(cut, ["-c2-8", TSV_FILE, CSV_FILE]).output
-        == """ython\tP
-nail\tSS
-lpaca\tI
-obin\tMy
-orse\tLi
-onkey\tC
-ryx\tWri
-ython,P
-nail,SS
-lpaca,I
-obin,My
-orse,Li
-onkey,C
-ryx,Wri
-orem Ip
-"""
+        runner.invoke(cut, [*cut_options, CSV_FILE, ALT_CSV_FILE]).output
+        == subprocess.run(
+            ["cut", *cut_options, CSV_FILE, ALT_CSV_FILE], capture_output=True, text=True
+        ).stdout
     )
 
-    # combined options
-    assert (
-        runner.invoke(cut, ["-f1", "-d,", CSV_FILE, ALT_CSV_FILE]).output
-        == """python
-snail
-alpaca
-robin
-horse
-donkey
-oryx
-Lorem Ipsum et cetera res vana
-English
-French
-Greek
-That book you never really read...
-Latin
-"""
-    )
-    assert (
-        runner.invoke(cut, ["-f1", "-d,", "-s", CSV_FILE, ALT_CSV_FILE]).output
-        == """python
-snail
-alpaca
-robin
-horse
-donkey
-oryx
-English
-French
-Greek
-Latin
-"""
-    )
+
+def test_cut_nonexistent_file() -> None:
+    assert runner.invoke(cut, ["-f2", NON_EXISTENT_FILE]).exception.args[0] == subprocess.run(
+        ["cut", "-f2", NON_EXISTENT_FILE], capture_output=True, text=True
+    ).stderr.rstrip("\n")
+
+    # reads output from stdout and stderr
     assert (
         runner.invoke(cut, ["-f2-3", NON_EXISTENT_FILE, TSV_FILE]).output
-        == """cut: test/resources/bazz.yaml: No such file or directory
-Programming Python\t2010
-SSH, The Secure Shell\t2005
-Intermediate Perl\t2012
-MySQL High Availability\t2014
-Linux in a Nutshell\t2009
-Cisco IOS in a Nutshell\t2005
-Writing Word Macros\t1999
-"""
+        == subprocess.Popen(
+            ["cut", "-f2-3", NON_EXISTENT_FILE, TSV_FILE],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+        )
+        .communicate()[0]
+        .decode()
     )
