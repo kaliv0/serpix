@@ -3,10 +3,10 @@ from click.testing import CliRunner
 from app.cli.commands import uniq
 
 
+runner = CliRunner()
+
 def test_uniq() -> None:
-    runner = CliRunner()
-    # no options
-    # assert runner.invoke(cat, [QUOTE_FILE]).output == """"""
+    assert runner.invoke(cat, [QUOTE_FILE]).output == """"""
 
     # single option
     # assert runner.invoke(cat, ["-n", QUOTE_FILE]).output == """"""
