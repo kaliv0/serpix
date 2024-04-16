@@ -50,7 +50,7 @@ class UniqHandler:
     @staticmethod
     def _get_output_file(path: str) -> TextIO:
         output = open(path, "a+")
-        # empty output content if exists
+        # erase output content if exists
         output.truncate(0)
         return output
 
