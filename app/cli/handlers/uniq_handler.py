@@ -1,6 +1,5 @@
 import os
-from sys import stdout
-from typing import TextIO, Tuple
+from typing import TextIO
 
 import click
 
@@ -8,6 +7,7 @@ import click
 class UniqHandler:
     def __init__(
         self,
+        file_list: tuple[str, ...],
         show_count: bool,
         show_unique: bool,
         show_repeated: bool,
@@ -19,6 +19,10 @@ class UniqHandler:
         self._validate_opts(
             show_count, show_unique, show_repeated, show_all_repeated, check_chars, skip_chars
         )
+        # setting input|output files
+        file_path, output_path = self._get_io_paths(file_list)
+        self.file_path = file_path
+        self.output_path = output_path
         # setting uniq options
         self.show_count = show_count
         self.show_unique = show_unique
@@ -30,15 +34,16 @@ class UniqHandler:
 
     # ### files ###
 
-    def handle_file(self, file_list: tuple[str, ...]) -> None:
+    def _get_io_paths(self, file_list: tuple[str, ...]) -> tuple[str, TextIO | None]:
         file, output_path = self._get_file_names(file_list)
         self._validate_file(file)
+
+        output = None
         if self._validate_output_path(output_path):
             output = self._get_output_file(output_path)
-            return self._process_file(file, output)
-        return self._process_file(file)
+        return file, output
 
-    def _get_file_names(self, file_list: tuple[str, ...]) -> Tuple[str, str | None]:
+    def _get_file_names(self, file_list: tuple[str, ...]) -> tuple[str, str | None]:
         if not file_list or file_list[0] == "-":
             raise ValueError("uniq: reading INPUT from stdin is not supported")
         if len(file_list) > 2:
@@ -71,8 +76,8 @@ class UniqHandler:
 
     # ### result messages ###
 
-    def _process_file(self, path: str, output: TextIO = None) -> None:
-        file = open(path, "r")
+    def process_file(self) -> None:
+        file = open(self.file_path, "r")
         counter = 1
         curr_line = file.readline()
         while next_line := file.readline():
@@ -80,19 +85,19 @@ class UniqHandler:
             if self._compare_lines(curr_line, next_line):
                 counter += 1
                 if self.show_all_repeated:
-                    self._handle_message(counter, curr_line, output)
+                    self._handle_message(counter, curr_line)
                     curr_line = next_line
                 continue
             # previous line is different compared to next_one
             # but 'uniq' only if not last in series of duplicates
-            self._handle_message(counter, curr_line, output)
+            self._handle_message(counter, curr_line)
             counter = 1
             curr_line = next_line
         # handle last line in file
-        self._handle_message(counter, curr_line, output)
+        self._handle_message(counter, curr_line)
         file.close()
-        if output:
-            output.close()
+        if self.output_path:
+            self.output_path.close()
 
     def _compare_lines(self, current: str, next: str) -> bool:
         if self.check_chars:
@@ -105,12 +110,12 @@ class UniqHandler:
             return current.upper() == next.upper()
         return current == next
 
-    def _handle_message(self, counter: int, curr_line: str, output: TextIO = stdout) -> None:
+    def _handle_message(self, counter: int, curr_line: str) -> None:
         message = f"{curr_line}"
         if self.show_count:
             message = f"{counter :>7} " + message
         if self._should_print_message(counter):
-            click.echo(message, nl=False, file=output)
+            click.echo(message, nl=False, file=self.output_path)
 
     def _should_print_message(self, counter: int) -> bool:
         if self.show_unique:

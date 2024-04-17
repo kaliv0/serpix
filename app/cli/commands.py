@@ -402,6 +402,7 @@ def uniq(
     You may want to sort the input first, or use 'sort -u' without 'uniq'.
     """
     uniq_handler = UniqHandler(
+        file_list,
         show_count,
         show_unique,
         show_repeated,
@@ -410,7 +411,7 @@ def uniq(
         check_chars,
         skip_chars,
     )
-    uniq_handler.handle_file(file_list)
+    uniq_handler.process_file()
 
 
 # ### sort ###

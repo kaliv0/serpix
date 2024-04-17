@@ -42,5 +42,4 @@ to refactor:
 
 - check and unify byte_count in head (intRange(0)) and cut (string)?
 
--uniq -> support reading from sdtin
-      -> refactor _handle_massage and output param
+-uniq -> support reading from sdtin?
