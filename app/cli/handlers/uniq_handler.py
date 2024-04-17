@@ -80,7 +80,7 @@ class UniqHandler:
             if self._compare_lines(curr_line, next_line):
                 counter += 1
                 if self.show_all_repeated:
-                    click.echo(curr_line, nl=False)
+                    self._handle_message(counter, curr_line, output)
                     curr_line = next_line
                 continue
             # previous line is different compared to next_one
