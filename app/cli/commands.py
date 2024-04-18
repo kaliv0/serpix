@@ -411,7 +411,7 @@ def uniq(
         check_chars,
         skip_chars,
     )
-    uniq_handler.process_file()
+    uniq_handler.process_input()
 
 
 # ### sort ###

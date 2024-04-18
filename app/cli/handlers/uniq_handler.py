@@ -1,4 +1,5 @@
 import os
+import sys
 from typing import TextIO
 
 import click
@@ -44,13 +45,12 @@ class UniqHandler:
         return file, output
 
     def _get_file_names(self, file_list: tuple[str, ...]) -> tuple[str, str | None]:
-        if not file_list or file_list[0] == "-":
-            raise ValueError("uniq: reading INPUT from stdin is not supported")
         if len(file_list) > 2:
             raise ValueError(f"uniq: extra operand ‘{file_list[2]}’")
-        if len(file_list) == 2:
-            return file_list[0], file_list[1]
-        return file_list[0], None
+
+        file = file_list[0] if file_list else "-"
+        output = file_list[1] if len(file_list) == 2 else None
+        return file, output
 
     @staticmethod
     def _get_output_file(path: str) -> TextIO:
@@ -62,6 +62,8 @@ class UniqHandler:
     # ### validate path ###
 
     def _validate_file(self, file: str) -> None:
+        if file == "-":
+            return
         if os.path.exists(file) is False:
             raise ValueError(f"uniq: {file}: No such file or directory")
         if os.path.isdir(file):
@@ -76,7 +78,12 @@ class UniqHandler:
 
     # ### result messages ###
 
-    def process_file(self) -> None:
+    def process_input(self) -> None:
+        if self.file_path == "-":
+            return self._process_from_stdin()
+        return self._process_from_file()
+
+    def _process_from_file(self) -> None:
         file = open(self.file_path, "r")
         counter = 1
         curr_line = file.readline()
@@ -96,6 +103,29 @@ class UniqHandler:
         # handle last line in file
         self._handle_message(counter, curr_line)
         file.close()
+        if self.output_path:
+            self.output_path.close()
+
+    def _process_from_stdin(self) -> None:
+        intput = sys.stdin.buffer
+        counter = 1
+        curr_line = intput.readline().decode()
+        while next_line := intput.readline().decode():
+            # count duplicates until different line is reached
+            if self._compare_lines(curr_line, next_line):
+                counter += 1
+                if self.show_all_repeated:
+                    self._handle_message(counter, curr_line)
+                    curr_line = next_line
+                continue
+            # previous line is different compared to next_one
+            # but 'uniq' only if not last in series of duplicates
+            self._handle_message(counter, curr_line)
+            counter = 1
+            curr_line = next_line
+        # handle last line in file
+        self._handle_message(counter, curr_line)
+        # file.close()
         if self.output_path:
             self.output_path.close()
 
