@@ -422,25 +422,12 @@ def uniq(
 -k, sort based on column number,
 -c, check if sorted,
 -u, sort and remove duplicate lines,
--M -> sort my months name ???
 """
-
-# ### grep ###
-
-# ### sed ###
-
-# ### tr ###
 
 # ### find ###
 
-###### ???????? ######
+# ### tr ###
 
-# ### diff -> wrapper around built-in python's implementation?? ###
+# ### sed ###
 
-# ### comm ###
-
-# ### more ###
-
-# ### less -> use cat with click's pager?? ###
-
-# ### crontab ###
+# ### grep ###
