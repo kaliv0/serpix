@@ -32,7 +32,7 @@ def test_head(head_options: str, file: str) -> None:
 
 def test_head_error_message() -> None:
     expected_value_error = "Contradicting flags passed: 'quiet' and 'verbose'"
-    assert runner.invoke(head, ["-qv", LOG_FILE]).exception.args[0] == expected_value_error
+    assert runner.invoke(head, ["-qv", LOG_FILE]).exception.args[0] == expected_value_error # type: ignore
 
 
 # NB: serpix head puts additional empty lines between different files in the output for better readabilty

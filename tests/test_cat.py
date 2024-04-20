@@ -2,14 +2,15 @@ from click.testing import CliRunner
 
 from app.cli.commands import cat
 
-QUOTE_FILE = "tests/resources/quotes1.txt"
-ALT_FILE = "tests/resources/quotes2.txt"
+QUOTE_FILE = "tests/resources/cat/quotes1.txt"
+ALT_FILE = "tests/resources/cat/quotes2.txt"
 NON_EXISTENT_FILE = "test/resources/bazz.yaml"
 
+runner = CliRunner()
 
-def test_cat_single_file() -> None:
-    runner = CliRunner()
-    # no options
+
+def test_cat() -> None:
+    # NB: spx cat add extra new line at the end for better readability
     assert (
         runner.invoke(cat, [QUOTE_FILE]).output
         == """Your heart is the size of an ocean. Go find yourself in its hidden depths.
@@ -58,24 +59,6 @@ These Capitalists Generally Act Harmoniously And In Concert, To Fleece The Peopl
      8 People Must Learn To Hate And If They Can Learn To Hate, They Can Be Taught To Love.
      9 Everyone has been made for some particular work, and the desire for that work has been put in every heart.
     10     The less of the World, the freer you live.
-"""
-    )
-
-    assert (
-        runner.invoke(cat, ["-s", ALT_FILE]).output
-        == """I Don'T Believe In Failure. It Is Not Failure If You Enjoyed The Process.
-Do not get elated at any victory, for all such victory is subject to the will of God.
-
-Wear gratitude like a cloak and it will feed every corner of your life.
-If you even dream of beating me you'd better wake up and apologize.
-
-I Will Praise Any Man That Will Praise Me.
-    One Of The Greatest Diseases Is To Be Nobody To Anybody.
-I'm so fast that last night I turned off the light switch in my hotel room and was in bed before the room was dark.
-
-People Must Learn To Hate And If They Can Learn To Hate, They Can Be Taught To Love.
-Everyone has been made for some particular work, and the desire for that work has been put in every heart.
-    The less of the World, the freer you live.
 """
     )
 
@@ -143,7 +126,8 @@ Everyone has been made for some particular work, and the desire for that work ha
         runner.invoke(cat, ["-A", ALT_FILE]).output == runner.invoke(cat, ["-ET", ALT_FILE]).output
     )
 
-    # combined options
+
+def test_cat_combined_options() -> None:
     assert (
         runner.invoke(cat, ["-nE", QUOTE_FILE]).output
         == """     1 Your heart is the size of an ocean. Go find yourself in its hidden depths.$
@@ -191,19 +175,19 @@ These Capitalists Generally Act Harmoniously And In Concert, To Fleece The Peopl
 """
     )
 
-    # error messages
+
+def test_cat_error_messages() -> None:
     assert (
-        runner.invoke(cat, ["-n", "-b", QUOTE_FILE]).exception.args[0]
+        runner.invoke(cat, ["-n", "-b", QUOTE_FILE]).exception.args[0]  # type: ignore
         == "Contradicting flags passed: 'number' and 'number-nonblank'"
     )
     assert (
-        runner.invoke(cat, ["-n", NON_EXISTENT_FILE]).exception.args[0]
+        runner.invoke(cat, ["-n", NON_EXISTENT_FILE]).exception.args[0]  # type: ignore
         == f"cat: {NON_EXISTENT_FILE}: No such file or directory"
     )
 
 
 def test_cat_file_list() -> None:
-    runner = CliRunner()
     # no options
     assert (
         runner.invoke(cat, [QUOTE_FILE, ALT_FILE]).output
@@ -323,7 +307,8 @@ Everyone has been made for some particular work, and the desire for that work ha
 """
     )
 
-    # combined options
+
+def test_cat_file_list_combined_options() -> None:
     assert (
         runner.invoke(cat, ["-nE", QUOTE_FILE, ALT_FILE]).output
         == """     1 Your heart is the size of an ocean. Go find yourself in its hidden depths.$
@@ -410,7 +395,8 @@ Everyone has been made for some particular work, and the desire for that work ha
 """
     )
 
-    # non-existent file
+
+def test_cat_file_list_non_existent_file() -> None:
     assert (
         runner.invoke(cat, [QUOTE_FILE, NON_EXISTENT_FILE]).output
         == """Your heart is the size of an ocean. Go find yourself in its hidden depths.

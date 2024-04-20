@@ -8,8 +8,10 @@ NON_EXISTENT_FILE = "test/resources/bazz.yaml"
 DIR_PATH = "test/resources/"
 
 
+runner = CliRunner()
+
+
 def test_tail_single_file() -> None:
-    runner = CliRunner()
     # no options
     expected_no_opts_1 = """Hello world
 Ciao ragazzi
@@ -61,7 +63,7 @@ They never SAY good-night.
 
     # error messages
     expected_value_error = "Contradicting flags passed: 'quiet' and 'verbose'"
-    assert runner.invoke(tail, ["-q", "-v", LOG_FILE]).exception.args[0] == expected_value_error
+    assert runner.invoke(tail, ["-q", "-v", LOG_FILE]).exception.args[0] == expected_value_error  # type: ignore
 
 
 def test_wc_file_list() -> None:
@@ -161,5 +163,5 @@ They never SAY good-night.
     # not supported
     expected_value_error = "tail: following multiple files is not supported"
     assert (
-        runner.invoke(tail, ["-f", LOG_FILE, POEM_FILE]).exception.args[0] == expected_value_error
+        runner.invoke(tail, ["-f", LOG_FILE, POEM_FILE]).exception.args[0] == expected_value_error  # type: ignore
     )

@@ -4,24 +4,6 @@ tr
 sort 
 find
 -----------------------------
-comm?
-diff
-patch (depends on diff?)
-more? 
-less? 
-crontab 
-find
-xargs
-hexdump
-sh
-bc
-ed
-(vi -> depends on ed and sed)
-
-ls ??
-curl ??
-
------------------------------
 
 to refactor:
 - combine classes with similar methods (head, tail; cat, cut) into OOP hierarchies
@@ -37,6 +19,5 @@ to refactor:
     -> not supported in this case -> remove reading from sdtin???
 
 refactor tests:
-    -cat?
     -tail
     -wc
