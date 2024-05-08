@@ -18,7 +18,12 @@ class UniqHandler:
         skip_chars: int,
     ) -> None:
         self._validate_opts(
-            show_count, show_unique, show_repeated, show_all_repeated, check_chars, skip_chars
+            show_count,
+            show_unique,
+            show_repeated,
+            show_all_repeated,
+            check_chars,
+            skip_chars,
         )
         # setting input|output files
         file_path, output_path = self._get_io_paths(file_list)
@@ -41,7 +46,7 @@ class UniqHandler:
 
         output = None
         if self._validate_output_path(output_path):
-            output = self._get_output_file(output_path)
+            output = self._get_output_file(output_path)  # type: ignore
         return file, output
 
     def _get_file_names(self, file_list: tuple[str, ...]) -> tuple[str, str | None]:
