@@ -282,7 +282,7 @@ def cat(
     "--fields",
     "field_count",
     type=click.STRING,
-    help="""select only these fields;  
+    help="""select only these fields;
 also print any line that contains no delimiter character""",
 )
 @click.option(
